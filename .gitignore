@@ -1,12 +1,102 @@
+# ── 依赖 ──────────────────────────────────────
 node_modules/
+pnpm-lock.yaml
+
+# ── 构建产物 ──────────────────────────────────
 dist/
 *.tsbuildinfo
-.env
-.env.local
+examples/*/dist/
+
+# ── 测试产物 ──────────────────────────────────
 *.pptx
 debug/
 test/output/
-.turbo/
 coverage/
+
+# ── 环境变量 ──────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── 构建缓存 ──────────────────────────────────
+.turbo/
 .vite/
-examples/*/dist/
+.cache/
+*.tsbuildinfo
+
+# ── AI 工具 ───────────────────────────────────
+# Claude Code
+.claude/
+CLAUDE.md
+
+# Cursor
+.cursor/
+.cursorrules
+
+# GitHub Copilot
+.copilot/
+
+# Windsurf
+.windsurf/
+
+# Codeium
+.codeium/
+
+# Amazon Q
+.amazonq/
+
+# Tabnine
+.tabnine/
+
+# Continue
+.continue/
+
+# Aider
+.aider*
+.aider.conf.yml
+
+# Cody
+.cody/
+
+# Replit AI
+.replit/
+
+# Bolt
+.bolt/
+
+# v0
+.v0/
+
+# Coze
+.coze/
+
+# Dify
+.dify/
+
+# General AI / LLM
+.prompt/
+.rules/
+*.prompt.md
+
+# ── IDE ───────────────────────────────────────
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ── 操作系统 ──────────────────────────────────
+$RECYCLE.BIN/
+System Volume Information/
+
+# ── 临时文件 ──────────────────────────────────
+*.tmp
+*.temp
+*.log
+tmp/
+temp/
