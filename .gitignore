@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.env
+.env.local
+*.pptx
+debug/
+test/output/
+.turbo/
+coverage/
+.vite/
+examples/*/dist/

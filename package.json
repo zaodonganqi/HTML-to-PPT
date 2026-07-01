@@ -1,0 +1,17 @@
+{
+  "name": "htp",
+  "version": "0.0.1",
+  "private": true,
+  "description": "HTML To PowerPoint — Export web pages to native PowerPoint with editable text, tables, images, and animations",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "dev": "pnpm -r --parallel run dev",
+    "test": "pnpm -r run test",
+    "lint": "pnpm -r run lint",
+    "clean": "pnpm -r run clean"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

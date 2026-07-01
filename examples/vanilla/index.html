@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>HTP Demo — Q2 Growth Review</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #e8eaed;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 1080px;
+      position: relative;
+      background: #f7f8fb;
+      overflow: hidden;
+      page-break-after: always;
+      margin: 0 auto 40px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    }
+
+    /* Slide 1: Title slide */
+    .slide-1 {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    }
+
+    .slide-1 #title {
+      position: absolute;
+      left: 120px;
+      top: 280px;
+      font-size: 96px;
+      font-family: Arial, sans-serif;
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+
+    .slide-1 #subtitle {
+      position: absolute;
+      left: 120px;
+      top: 420px;
+      font-size: 42px;
+      font-family: Arial, sans-serif;
+      color: #a0b4d0;
+      font-weight: 400;
+    }
+
+    .slide-1 .accent-bar {
+      position: absolute;
+      left: 120px;
+      top: 510px;
+      width: 120px;
+      height: 6px;
+      background: #28d6a3;
+      border-radius: 3px;
+    }
+
+    /* Slide 2: Content slide */
+    .slide-2 #slide2-title {
+      position: absolute;
+      left: 120px;
+      top: 90px;
+      font-size: 72px;
+      font-family: Arial, sans-serif;
+      color: #15171a;
+    }
+
+    .visual {
+      position: absolute;
+      left: 120px;
+      top: 240px;
+      width: 760px;
+      height: 500px;
+      background: linear-gradient(135deg, #28d6a3, #2f6df6);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 48px;
+      font-weight: 700;
+    }
+
+    table {
+      position: absolute;
+      left: 980px;
+      top: 260px;
+      width: 760px;
+      border-collapse: collapse;
+      font-size: 32px;
+      font-family: Arial, sans-serif;
+    }
+
+    td, th {
+      border: 1px solid #c9ced8;
+      padding: 22px 28px;
+      text-align: left;
+    }
+
+    th {
+      background: #f0f2f5;
+      font-weight: 700;
+      color: #15171a;
+    }
+
+    td {
+      color: #3a3d42;
+    }
+
+    /* Slide 3: Summary */
+    .slide-3 {
+      background: linear-gradient(135deg, #0f3460, #16213e);
+    }
+
+    .slide-3 h1 {
+      position: absolute;
+      left: 120px;
+      top: 300px;
+      font-size: 80px;
+      font-family: Arial, sans-serif;
+      color: #ffffff;
+    }
+
+    .slide-3 p {
+      position: absolute;
+      left: 120px;
+      top: 430px;
+      font-size: 36px;
+      font-family: Arial, sans-serif;
+      color: #a0b4d0;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Slide 1: Title -->
+  <section class="slide slide-1">
+    <h1 id="title">Q2 Growth Review</h1>
+    <p id="subtitle">Quarterly Performance &amp; Key Metrics</p>
+    <div class="accent-bar"></div>
+  </section>
+
+  <!-- Slide 2: Content with chart + table -->
+  <section class="slide slide-2">
+    <h1 id="slide2-title">Key Metrics</h1>
+
+    <div class="visual">
+      📈 Revenue Trend
+    </div>
+
+    <table id="metrics">
+      <thead>
+        <tr><th>Metric</th><th>Q1</th><th>Q2</th><th>Change</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Revenue</td><td>$0.9M</td><td>$1.2M</td><td>+33%</td></tr>
+        <tr><td>Customers</td><td>240</td><td>312</td><td>+30%</td></tr>
+        <tr><td>Churn</td><td>4.2%</td><td>3.1%</td><td>-26%</td></tr>
+        <tr><td>NPS</td><td>62</td><td>74</td><td>+19%</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Slide 3: Summary -->
+  <section class="slide slide-3">
+    <h1>Thank You</h1>
+    <p>Build with HTML. Ship as PowerPoint.<br>Next review: Q3 2026</p>
+  </section>
+
+  <!-- @htp/runtime 通过 Vite 构建加载 -->
+  <script type="module" src="./src/main.js"></script>
+
+</body>
+</html>

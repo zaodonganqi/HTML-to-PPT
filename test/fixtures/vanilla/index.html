@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>HTP Test Fixture</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #e8eaed; }
+    .slide {
+      width: 1920px; height: 1080px; position: relative;
+      overflow: hidden; margin: 0 auto 40px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    }
+    .slide-1 { background: linear-gradient(135deg, #1a1a2e, #0f3460); }
+    .slide-1 h1 {
+      position: absolute; left: 120px; top: 300px;
+      font-size: 96px; color: #fff; font-weight: 700;
+    }
+    .slide-1 p {
+      position: absolute; left: 120px; top: 440px;
+      font-size: 42px; color: #a0b4d0;
+    }
+    .slide-2 { background: #f7f8fb; }
+    .slide-2 h1 {
+      position: absolute; left: 120px; top: 90px;
+      font-size: 72px; color: #15171a;
+    }
+    table {
+      position: absolute; left: 980px; top: 260px;
+      width: 760px; border-collapse: collapse; font-size: 32px;
+    }
+    td, th { border: 1px solid #c9ced8; padding: 22px 28px; text-align: left; }
+    th { background: #f0f2f5; font-weight: 700; color: #15171a; }
+    td { color: #3a3d42; }
+    .visual {
+      position: absolute; left: 120px; top: 240px;
+      width: 760px; height: 500px; border-radius: 24px;
+      background: linear-gradient(135deg, #28d6a3, #2f6df6);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 48px; font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <section class="slide slide-1" htp="slide">
+    <h1 htp="text">Q2 Growth Review</h1>
+    <p htp="text">Quarterly Performance &amp; Key Metrics</p>
+  </section>
+
+  <section class="slide slide-2" htp="slide">
+    <h1 htp="text">Key Metrics</h1>
+    <div class="visual" htp="fallback">📈 Revenue Trend</div>
+    <table htp="table">
+      <thead>
+        <tr><th>Metric</th><th>Q1</th><th>Q2</th><th>Change</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Revenue</td><td>$0.9M</td><td>$1.2M</td><td>+33%</td></tr>
+        <tr><td>Customers</td><td>240</td><td>312</td><td>+30%</td></tr>
+        <tr><td>Churn</td><td>4.2%</td><td>3.1%</td><td>-26%</td></tr>
+        <tr><td>NPS</td><td>62</td><td>74</td><td>+19%</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <script>
+    // 就绪标志（exporter 的 htp-ready 模式会等待此值）
+    window.__HTP_READY__ = true;
+  </script>
+</body>
+</html>
