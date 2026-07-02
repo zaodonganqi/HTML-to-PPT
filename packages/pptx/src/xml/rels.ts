@@ -1,11 +1,9 @@
 /**
- * ─────────────────────────────────────────────
  * 关系文件 (.rels) 生成器
  *
  * 生成 PPTX 包内各级 _rels 目录下的 .rels 文件，
  * 包括根级关系、演示文稿关系、幻灯片图片关系等。
  * 定义所有 OOXML 关系类型常量。
- * ─────────────────────────────────────────────
  */
 
 import { esc } from "./builder";
@@ -22,12 +20,10 @@ export interface RelsEntry {
 const RELS_XMLNS = "http://schemas.openxmlformats.org/package/2006/relationships";
 
 /**
- * ─────────────────────────────────────────────
  * 根据关系条目列表生成完整的 .rels XML 字符串
  *
  * 输出标准的 OPC Relationships XML，每个条目对应一个
  * <Relationship> 节点，包含 Id、Type、Target 属性。
- * ─────────────────────────────────────────────
  */
 export function buildRels(entries: RelsEntry[]): string {
   let xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
@@ -55,12 +51,10 @@ export const REL_TYPE = {
 };
 
 /**
- * ─────────────────────────────────────────────
  * 生成根级 .rels 文件内容
  *
  * 包含指向 presentation.xml、core.xml 和 app.xml 三个
  * 顶层部件的关系引用。
- * ─────────────────────────────────────────────
  */
 export function buildRootRels(): string {
   return buildRels([
@@ -71,11 +65,9 @@ export function buildRootRels(): string {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 生成演示文稿级关系文件 (ppt/_rels/presentation.xml.rels)
  *
  * 包含所有幻灯片、幻灯片母版、幻灯片布局和主题的关系引用。
- * ─────────────────────────────────────────────
  */
 export function buildPresentationRels(
   slideCount: number,
@@ -115,11 +107,9 @@ export function buildPresentationRels(
 }
 
 /**
- * ─────────────────────────────────────────────
  * 生成幻灯片级关系文件（按图片数量）
  *
  * 为单个幻灯片生成包含布局引用和图片引用的 .rels 文件。
- * ─────────────────────────────────────────────
  */
 export function buildSlideRels(imageCount: number): string {
   const entries: RelsEntry[] = [];
@@ -142,12 +132,10 @@ export function buildSlideRels(imageCount: number): string {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 生成幻灯片级关系文件（按全局图片索引）
  *
  * 根据全局图片索引数组生成每个幻灯片的 .rels 文件，
  * 支持跨幻灯片共享图片引用。
- * ─────────────────────────────────────────────
  */
 export function buildSlideRelsWithImages(
   imageIndices: number[],

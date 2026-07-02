@@ -1,12 +1,10 @@
 /**
- * ─────────────────────────────────────────────
  * PPTX 模块入口 — HTP PPTX 对象模型定义与主写入接口
  *
  * 定义生成 .pptx 文件所需的中间表示（IR）数据结构，
  * 包括 Deck、Slide、文本框、表格、图片、动画与主题，
  * 并导出 writePptx() 作为外部调用的唯一入口。
  * 详见 docs/design-spec.md §11 完整设计文档。
- * ─────────────────────────────────────────────
  */
 
 import { buildPptxZip } from "./zip";
@@ -108,13 +106,11 @@ export interface WritePptxOptions {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 从 Deck 对象模型生成完整的 .pptx 文件缓冲区
  *
  * 接收 HTP PPTX 中间表示（HtpPptxDeck），
  * 将其转换为符合 Office Open XML 规范的 ZIP 包，
  * 以 Node.js Buffer 形式返回，可直接写入磁盘。
- * ─────────────────────────────────────────────
  */
 export async function writePptx(options: WritePptxOptions): Promise<Buffer> {
   return buildPptxZip(options.deck);

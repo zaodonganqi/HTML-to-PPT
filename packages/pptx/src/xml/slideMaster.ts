@@ -1,21 +1,17 @@
 /**
- * ─────────────────────────────────────────────
  * ppt/slideMasters/slideMaster1.xml 生成器 — 最小空白母版
  *
  * 生成一个最小化的幻灯片母版 XML，包含默认背景、
  * 颜色映射和指向空白布局的关系引用。
- * ─────────────────────────────────────────────
  */
 
 import { NS } from "./builder";
 
 /**
- * ─────────────────────────────────────────────
  * 构建最小幻灯片母版 XML
  *
  * 返回包含默认白色背景（bg1）、标准颜色映射（clrMap）
  * 和指向 slideLayout1 的关系引用的 p:sldMaster 文档。
- * ─────────────────────────────────────────────
  */
 export function buildSlideMaster(): string {
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>

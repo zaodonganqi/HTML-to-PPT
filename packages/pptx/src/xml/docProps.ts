@@ -1,21 +1,17 @@
 /**
- * ─────────────────────────────────────────────
  * 文档属性生成器 — docProps/core.xml 与 docProps/app.xml
  *
  * 生成 PPTX 包所需的 Dublin Core 元数据和扩展属性文件。
  * 包括标题、创建者、创建/修改时间等标准元信息。
- * ─────────────────────────────────────────────
  */
 
 import { esc } from "./builder";
 
 /**
- * ─────────────────────────────────────────────
  * 生成 docProps/core.xml（Dublin Core 元数据）
  *
  * 包含标题、创建者、最后修改者以及创建/修改时间戳。
  * 默认标题为 "HTP Presentation"，默认创建者为 "HTP"。
- * ─────────────────────────────────────────────
  */
 export function buildCoreProps(opts?: {
   title?: string;
@@ -41,11 +37,9 @@ export function buildCoreProps(opts?: {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 生成 docProps/app.xml（扩展属性）
  *
  * 包含应用程序名称和版本号信息。
- * ─────────────────────────────────────────────
  */
 export function buildAppProps(): string {
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>

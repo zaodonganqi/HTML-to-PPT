@@ -1,7 +1,5 @@
 /**
- * ────────────────────────────────────────────────────────────────────────────────
  * 表格提取模块
- * ────────────────────────────────────────────────────────────────────────────────
  * 从幻灯片元素中提取带有 [htp="table"] 标记的 HTML 表格，
  * 解析为 HtpPptxTable 对象，包含单元格位置、内容和样式信息。
  *
@@ -14,7 +12,6 @@
  *   - 复杂表格（合并单元格）会生成警告并回退为截图方式
  *
  * 所有坐标按视口与甲板比例进行线性映射。
- * ────────────────────────────────────────────────────────────────────────────────
  */
 
 import type { Page, ElementHandle } from "playwright";
@@ -45,9 +42,7 @@ export interface ExtractedTable {
 }
 
 /**
- * ────────────────────────────────────────────────────────────────────────────────
  * 从幻灯片元素中提取表格节点
- * ────────────────────────────────────────────────────────────────────────────────
  * 在浏览器上下文中查询当前幻灯片内所有 [htp="table"] 元素，
  * 遍历每个表格的行（tr）和单元格（td/th），构建 ExtractedTable 数组。
  *
@@ -59,7 +54,6 @@ export interface ExtractedTable {
  *   5. 从每行的首个单元格测量该行高度
  *
  * 空表格（0 行或 0 列）将被跳过。
- * ────────────────────────────────────────────────────────────────────────────────
  */
 export async function extractTableNodes(
   page: Page,
@@ -110,9 +104,10 @@ export async function extractTableNodes(
 
         if (rowCount === 0 || colCount === 0) return;
 
-        // 视口坐标 → PPTX 英寸坐标
-        const x = rect.x / vw * dw;
-        const y = rect.y / vh * dh;
+        // 计算相对于幻灯片元素的位置（而非相对于视口）
+        const slideRect = slideEl.getBoundingClientRect();
+        const x = (rect.x - slideRect.x) / vw * dw;
+        const y = (rect.y - slideRect.y) / vh * dh;
         const w = rect.width / vw * dw;
         const h = rect.height / vh * dh;
 

@@ -1,7 +1,5 @@
 /**
- * ────────────────────────────────────────────────────────────────────────────────
  * 文本节点提取模块
- * ────────────────────────────────────────────────────────────────────────────────
  * 从幻灯片元素中提取带有 [htp="text"] 标记的 HTML 元素，
  * 计算其计算样式（字体、颜色、大小、对齐方式等）和边界框位置，
  * 并将视口坐标转换为 PPTX 坐标（英寸）。
@@ -15,7 +13,6 @@
  *   - 行高
  *
  * 所有坐标和尺寸均按视口与甲板的比例进行线性映射。
- * ────────────────────────────────────────────────────────────────────────────────
  */
 
 import type { Page, ElementHandle } from "playwright";
@@ -47,9 +44,7 @@ export interface ExtractedText {
 }
 
 /**
- * ────────────────────────────────────────────────────────────────────────────────
  * 从幻灯片元素中提取文本节点
- * ────────────────────────────────────────────────────────────────────────────────
  * 在浏览器上下文中查询当前幻灯片内所有 [htp="text"] 元素，
  * 读取每个元素的 getBoundingClientRect 和 getComputedStyle，
  * 构建 HtpPptxTextBox 对象数组。
@@ -61,7 +56,6 @@ export interface ExtractedText {
  *
  * 颜色解析：支持 rgb(r, g, b) 格式自动转换为 #rrggbb。
  * 空文本节点会被自动跳过。
- * ────────────────────────────────────────────────────────────────────────────────
  */
 export async function extractTextNodes(
   page: Page,
@@ -94,9 +88,10 @@ export async function extractTextNodes(
 
         if (!text) return;
 
-        // 视口坐标 → PPTX 英寸坐标
-        const x = rect.x / vw * dw;
-        const y = rect.y / vh * dh;
+        // 计算相对于幻灯片元素的位置（而非相对于视口）
+        const slideRect = slideEl.getBoundingClientRect();
+        const x = (rect.x - slideRect.x) / vw * dw;
+        const y = (rect.y - slideRect.y) / vh * dh;
         const w = rect.width / vw * dw;
         const h = rect.height / vh * dh;
 

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nova X1 — Launch Event</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:#000;color:#fff;overflow-x:hidden}
+
+/* ===== SLIDE BASE ===== */
+.slide{width:100vw;height:100vh;scroll-snap-align:start;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 80px}
+
+/* ===== SLIDE 1 — HERO ===== */
+#slide-hero{background:radial-gradient(ellipse at 50% 40%,#0a0f1e 0%,#020408 70%,#000 100%)}
+#slide-hero .light-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.6;pointer-events:none}
+#slide-hero .light-orb.orb-blue{width:600px;height:600px;background:radial-gradient(circle,#3b82f6 0%,transparent 70%);top:-200px;left:50%;transform:translateX(-50%);animation:orbPulse 4s ease-in-out infinite}
+#slide-hero .light-orb.orb-gold{width:400px;height:400px;background:radial-gradient(circle,#f59e0b 0%,transparent 70%);bottom:-100px;right:-100px;animation:orbPulse 5s ease-in-out 1s infinite}
+#slide-hero .light-orb.orb-purple{width:350px;height:350px;background:radial-gradient(circle,#8b5cf6 0%,transparent 70%);bottom:10%;left:-80px;animation:orbPulse 6s ease-in-out 2s infinite}
+@keyframes orbPulse{0%,100%{opacity:0.4;transform:scale(1)}50%{opacity:0.7;transform:scale(1.15)}}
+#slide-hero .particle{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:particleFloat 8s ease-in-out infinite;opacity:0}
+@keyframes particleFloat{0%,100%{opacity:0;transform:translateY(0) scale(1)}20%{opacity:0.8}50%{opacity:0.4;transform:translateY(-60px) scale(1.5)}80%{opacity:0.2}100%{opacity:0;transform:translateY(-120px) scale(0.5)}}
+#slide-hero .device-silhouette{width:180px;height:360px;background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(139,92,246,0.1));border:2px solid rgba(59,130,246,0.3);border-radius:28px;position:relative;box-shadow:0 0 80px rgba(59,130,246,0.2),inset 0 0 40px rgba(59,130,246,0.05)}
+#slide-hero .device-silhouette::after{content:'';position:absolute;top:20px;left:50%;transform:translateX(-50%);width:60px;height:8px;background:rgba(255,255,255,0.15);border-radius:4px}
+#slide-hero .hero-content{position:relative;z-index:2;text-align:center;margin-bottom:60px}
+#slide-hero .hero-subtitle{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:500;letter-spacing:6px;text-transform:uppercase;color:#3b82f6;margin-bottom:20px}
+#slide-hero .hero-title{font-size:120px;font-weight:900;letter-spacing:-4px;line-height:1;background:linear-gradient(135deg,#fff 0%,#93c5fd 40%,#60a5fa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px}
+#slide-hero .hero-tagline{font-size:28px;font-weight:300;color:rgba(255,255,255,0.75);letter-spacing:1px;margin-bottom:40px}
+#slide-hero .hero-date{font-size:20px;font-weight:600;color:#f59e0b;letter-spacing:3px;text-transform:uppercase}
+
+/* ===== SLIDE 2 — DESIGN & DISPLAY ===== */
+#slide-design{background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 50%,#f1f5f9 100%);color:#1e293b}
+#slide-design .design-title{font-family:'Space Grotesk',sans-serif;font-size:56px;font-weight:700;letter-spacing:-2px;color:#0f172a;margin-bottom:60px}
+#slide-design .design-layout{display:flex;align-items:center;gap:80px;position:relative;z-index:2}
+#slide-design .device-illustration{position:relative;width:260px;height:520px;background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%);border-radius:32px;box-shadow:0 25px 80px rgba(0,0,0,0.3),0 4px 20px rgba(0,0,0,0.1);border:3px solid #334155;flex-shrink:0}
+#slide-design .device-illustration .screen-area{position:absolute;top:18px;left:12px;right:12px;bottom:18px;background:linear-gradient(135deg,#0ea5e9 0%,#3b82f6 50%,#8b5cf6 100%);border-radius:18px;overflow:hidden}
+#slide-design .device-illustration .screen-glow{position:absolute;top:20%;left:15%;width:70%;height:50%;background:radial-gradient(ellipse,rgba(255,255,255,0.2),transparent 70%);border-radius:50%}
+#slide-design .callout-group{display:flex;flex-direction:column;gap:24px}
+#slide-design .callout{position:relative;padding:16px 24px;background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);border:1px solid rgba(0,0,0,0.08);border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.06);transition:transform 0.3s ease,box-shadow 0.3s ease}
+#slide-design .callout:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.1)}
+#slide-design .callout .callout-label{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:#64748b;margin-bottom:4px}
+#slide-design .callout .callout-value{font-size:22px;font-weight:700;color:#0f172a}
+
+/* ===== SLIDE 3 — PERFORMANCE TABLE ===== */
+#slide-specs{background:linear-gradient(180deg,#0a0f1e 0%,#0f172a 50%,#020408 100%)}
+#slide-specs .specs-title{font-family:'Space Grotesk',sans-serif;font-size:56px;font-weight:700;letter-spacing:-2px;color:#fff;margin-bottom:60px}
+#slide-specs .specs-table{border-collapse:collapse;width:900px;max-width:90vw;font-size:16px;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+#slide-specs .specs-table thead th{background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:2px;padding:18px 24px;text-align:left}
+#slide-specs .specs-table tbody td{padding:16px 24px;color:#e2e8f0;border-bottom:1px solid rgba(255,255,255,0.05)}
+#slide-specs .specs-table tbody tr:nth-child(odd){background:rgba(30,58,138,0.15)}
+#slide-specs .specs-table tbody tr:nth-child(even){background:rgba(15,23,42,0.3)}
+#slide-specs .specs-table tbody tr:hover{background:rgba(59,130,246,0.15)}
+#slide-specs .specs-table tbody td:first-child{font-weight:600;color:#93c5fd}
+#slide-specs .specs-table tbody td:nth-child(2){font-family:'Space Grotesk',sans-serif;font-weight:500}
+#slide-specs .specs-table tbody td:last-child{color:#94a3b8;font-size:14px}
+
+/* ===== SLIDE 4 — CAMERA SYSTEM ===== */
+#slide-camera{background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%)}
+#slide-camera .camera-layout{display:flex;align-items:center;gap:80px;width:100%;max-width:1200px}
+#slide-camera .camera-bump-area{flex:1;display:flex;align-items:center;justify-content:center;min-height:400px}
+#slide-camera .camera-bump{position:relative;width:200px;height:200px}
+#slide-camera .lens-main{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:140px;height:140px;background:radial-gradient(circle at 30% 30%,#1e293b,#0f172a);border-radius:50%;border:4px solid #334155;box-shadow:0 0 40px rgba(59,130,246,0.2),inset 0 0 20px rgba(0,0,0,0.5)}
+#slide-camera .lens-main::after{content:'';position:absolute;top:20%;left:22%;width:30px;height:30px;background:radial-gradient(circle,rgba(59,130,246,0.4),transparent);border-radius:50%}
+#slide-camera .lens-small{position:absolute;width:50px;height:50px;background:radial-gradient(circle at 30% 30%,#334155,#0f172a);border-radius:50%;border:3px solid #475569;box-shadow:0 0 20px rgba(139,92,246,0.15)}
+#slide-camera .lens-small.ls1{top:0;right:20px}
+#slide-camera .lens-small.ls2{top:8px;right:80px;width:36px;height:36px}
+#slide-camera .lens-small.ls3{top:10px;left:10px;width:28px;height:28px}
+#slide-camera .camera-specs{flex:1;display:flex;flex-direction:column;gap:20px}
+#slide-camera .cam-spec-item{padding:20px 28px;background:rgba(255,255,255,0.04);border-left:4px solid #3b82f6;border-radius:0 12px 12px 0;transition:background 0.3s ease,transform 0.3s ease}
+#slide-camera .cam-spec-item:hover{background:rgba(59,130,246,0.1);transform:translateX(8px)}
+#slide-camera .cam-spec-value{font-size:28px;font-weight:700;color:#fff;margin-bottom:4px}
+#slide-camera .cam-spec-label{font-size:14px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px}
+
+/* ===== SLIDE 5 — CAMERA SAMPLES ===== */
+#slide-samples{background:linear-gradient(180deg,#1a1a2e 0%,#16213e 100%)}
+#slide-samples .samples-title{font-family:'Space Grotesk',sans-serif;font-size:48px;font-weight:700;letter-spacing:-2px;color:#fff;margin-bottom:50px;position:relative;z-index:2}
+#slide-samples .samples-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;width:100%;max-width:1200px;position:relative;z-index:2}
+#slide-samples .sample-card{border-radius:16px;overflow:hidden;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);transition:transform 0.3s ease,box-shadow 0.3s ease}
+#slide-samples .sample-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.4)}
+#slide-samples .sample-image{width:100%;aspect-ratio:4/3;position:relative}
+#slide-samples .sample-image.sample-uw{background:linear-gradient(135deg,#1e40af 0%,#3b82f6 30%,#06b6d4 60%,#0891b2 100%)}
+#slide-samples .sample-image.sample-portrait{background:linear-gradient(135deg,#4c1d95 0%,#8b5cf6 30%,#d946ef 60%,#a855f7 100%)}
+#slide-samples .sample-image.sample-night{background:linear-gradient(135deg,#020617 0%,#1e293b 30%,#334155 50%,#0f172a 100%)}
+#slide-samples .sample-image.sample-macro{background:linear-gradient(135deg,#14532d 0%,#22c55e 30%,#fde047 60%,#eab308 100%)}
+#slide-samples .sample-image::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(255,255,255,0.08),transparent 70%)}
+#slide-samples .sample-image .sample-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:40px;opacity:0.5;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3))}
+#slide-samples .sample-caption{text-align:center;padding:16px;font-size:16px;font-weight:600;color:#e2e8f0;letter-spacing:0.5px}
+
+/* ===== SLIDE 6 — BATTERY & CHARGING ===== */
+#slide-battery{background:linear-gradient(135deg,#f0f9ff 0%,#e0f2fe 50%,#f8fafc 100%);color:#0f172a}
+#slide-battery .battery-title{font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:700;letter-spacing:-2px;color:#0f172a;margin-bottom:50px}
+#slide-battery .battery-layout{display:flex;align-items:center;gap:80px;width:100%;max-width:1100px}
+#slide-battery .battery-icon{position:relative;width:160px;height:280px;flex-shrink:0}
+#slide-battery .battery-body{position:absolute;inset:8px 0 0 0;background:linear-gradient(180deg,rgba(34,197,94,0.15) 0%,rgba(34,197,94,0.05) 100%);border:3px solid #22c55e;border-radius:24px;overflow:hidden}
+#slide-battery .battery-fill{position:absolute;bottom:0;left:4px;right:4px;height:75%;background:linear-gradient(180deg,#22c55e 0%,#16a34a 100%);border-radius:18px;animation:batteryGlow 3s ease-in-out infinite}
+@keyframes batteryGlow{0%,100%{box-shadow:inset 0 0 30px rgba(34,197,94,0.3)}50%{box-shadow:inset 0 0 60px rgba(34,197,94,0.6)}}
+#slide-battery .battery-cap{position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:60px;height:10px;background:#22c55e;border-radius:4px 4px 0 0}
+#slide-battery .battery-stats{display:grid;grid-template-columns:1fr 1fr;gap:24px;flex:1}
+#slide-battery .battery-stat{padding:24px;background:rgba(255,255,255,0.8);backdrop-filter:blur(10px);border:1px solid rgba(0,0,0,0.06);border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.04)}
+#slide-battery .battery-stat .stat-value{font-size:32px;font-weight:800;color:#0f172a;letter-spacing:-1px}
+#slide-battery .battery-stat .stat-label{font-size:14px;color:#64748b;margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+#slide-battery .charge-table{margin-top:30px;border-collapse:collapse;width:100%;max-width:500px;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06)}
+#slide-battery .charge-table th{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:14px 24px;text-align:left;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:1px}
+#slide-battery .charge-table td{padding:14px 24px;background:#fff;border-bottom:1px solid #f1f5f9;color:#334155}
+
+/* ===== SLIDE 7 — COLOR OPTIONS ===== */
+#slide-colors{background:linear-gradient(180deg,#0f172a 0%,#1e293b 50%,#0f172a 100%)}
+#slide-colors .colors-title{font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:700;letter-spacing:-2px;color:#fff;margin-bottom:60px}
+#slide-colors .colors-row{display:flex;gap:40px}
+#slide-colors .color-swatch{display:flex;flex-direction:column;align-items:center;gap:20px;transition:transform 0.3s ease}
+#slide-colors .color-swatch:hover{transform:translateY(-8px)}
+#slide-colors .color-circle{width:160px;height:160px;border-radius:50%;box-shadow:0 20px 60px rgba(0,0,0,0.4),inset 0 8px 20px rgba(255,255,255,0.15);border:3px solid rgba(255,255,255,0.1);transition:box-shadow 0.3s ease}
+#slide-colors .color-swatch:hover .color-circle{box-shadow:0 30px 80px rgba(0,0,0,0.5),inset 0 8px 20px rgba(255,255,255,0.2)}
+#slide-colors .color-black{background:linear-gradient(135deg,#1a1a2e 0%,#0f0f1a 50%,#000 100%)}
+#slide-colors .color-silver{background:linear-gradient(135deg,#e2e8f0 0%,#cbd5e1 30%,#94a3b8 70%,#64748b 100%)}
+#slide-colors .color-blue{background:linear-gradient(135deg,#1e3a5f 0%,#1e40af 40%,#3b82f6 70%,#60a5fa 100%)}
+#slide-colors .color-gold{background:linear-gradient(135deg,#92400e 0%,#d97706 40%,#f59e0b 70%,#fbbf24 100%)}
+#slide-colors .color-name{font-size:20px;font-weight:700;color:#e2e8f0;letter-spacing:0.5px}
+
+/* ===== SLIDE 8 — PRICING ===== */
+#slide-pricing{background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);color:#0f172a;position:relative;overflow:hidden}
+#slide-pricing .pricing-strip{position:absolute;bottom:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#3b82f6,#8b5cf6,#f59e0b,#22c55e,#3b82f6);background-size:200% 100%;animation:stripShift 6s linear infinite}
+@keyframes stripShift{0%{background-position:0 0}100%{background-position:200% 0}}
+#slide-pricing .pricing-title{font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:700;letter-spacing:-2px;color:#0f172a;margin-bottom:50px;position:relative;z-index:2}
+#slide-pricing .pricing-table{border-collapse:collapse;width:700px;max-width:90vw;position:relative;z-index:2;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.1)}
+#slide-pricing .pricing-table thead th{background:linear-gradient(135deg,#1e293b,#0f172a);color:#fff;padding:18px 28px;text-align:left;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:1.5px}
+#slide-pricing .pricing-table tbody td{padding:18px 28px;background:#fff;border-bottom:1px solid #e2e8f0;font-size:16px}
+#slide-pricing .pricing-table tbody tr:nth-child(even) td{background:#f8fafc}
+#slide-pricing .pricing-table tbody td:last-child{font-weight:700;color:#3b82f6;font-size:20px}
+#slide-pricing .pricing-info{position:relative;z-index:2;text-align:center;margin-top:40px}
+#slide-pricing .pricing-release{font-size:18px;font-weight:600;color:#334155;margin-bottom:12px}
+#slide-pricing .pricing-cta{display:inline-flex;gap:20px;align-items:center}
+#slide-pricing .pricing-btn-text{font-size:18px;font-weight:700;color:#fff;background:linear-gradient(135deg,#3b82f6,#2563eb);padding:14px 36px;border-radius:50px;cursor:default;box-shadow:0 8px 30px rgba(59,130,246,0.3)}
+#slide-pricing .pricing-link{font-size:16px;font-weight:600;color:#3b82f6;cursor:default;text-decoration:underline;text-underline-offset:4px}
+
+/* ===== SLIDE 9 — CLOSING ===== */
+#slide-closing{background:radial-gradient(ellipse at 50% 50%,#0f172a 0%,#020408 70%,#000 100%)}
+#slide-closing .closing-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+#slide-closing .closing-dot{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;animation:closingFloat 10s ease-in-out infinite;opacity:0}
+@keyframes closingFloat{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:0.8}50%{opacity:0.3}90%{opacity:0.1}100%{opacity:0;transform:translateY(-10vh) scale(1.5)}}
+#slide-closing .closing-content{position:relative;z-index:2;text-align:center}
+#slide-closing .closing-thanks{font-size:80px;font-weight:900;letter-spacing:-3px;background:linear-gradient(135deg,#fff 0%,#93c5fd 50%,#60a5fa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:20px}
+#slide-closing .closing-tagline{font-size:24px;font-weight:300;color:rgba(255,255,255,0.6);letter-spacing:2px;margin-bottom:16px}
+#slide-closing .closing-url{font-size:18px;font-weight:500;color:#3b82f6;letter-spacing:1px}
+</style>
+</head>
+<body>
+
+<!-- ===== SLIDE 1 — HERO / ANNOUNCEMENT ===== -->
+<section id="slide-hero" class="slide" htp="slide">
+
+  <!-- Decorative light effects -->
+  <div id="orb-blue" class="light-orb orb-blue" htp="fallback"></div>
+  <div id="orb-gold" class="light-orb orb-gold" htp="fallback"></div>
+  <div id="orb-purple" class="light-orb orb-purple" htp="fallback"></div>
+
+  <!-- Ambient particles -->
+  <div htp="fallback">
+    <div id="particle-1" class="particle" style="top:60%;left:10%;animation-delay:0s"></div>
+    <div id="particle-2" class="particle" style="top:50%;left:25%;animation-delay:1.5s"></div>
+    <div id="particle-3" class="particle" style="top:55%;left:70%;animation-delay:3s"></div>
+    <div id="particle-4" class="particle" style="top:45%;left:80%;animation-delay:4.5s"></div>
+    <div id="particle-5" class="particle" style="top:65%;left:40%;animation-delay:2s"></div>
+    <div id="particle-6" class="particle" style="top:40%;left:55%;animation-delay:5s"></div>
+    <div id="particle-7" class="particle" style="top:70%;left:15%;animation-delay:6s"></div>
+    <div id="particle-8" class="particle" style="top:35%;left:85%;animation-delay:3.5s"></div>
+  </div>
+
+  <!-- Floating phone silhouette -->
+  <div id="hero-device" class="device-silhouette" htp="image" style="animation:orbPulse 6s ease-in-out infinite;margin-bottom:40px"></div>
+
+  <!-- Hero content -->
+  <div class="hero-content">
+    <div id="hero-subtitle" class="hero-subtitle" htp="text">Introducing</div>
+    <h1 id="hero-title" class="hero-title" htp="text">Nova X1</h1>
+    <p id="hero-tagline" class="hero-tagline" htp="text">Beyond the horizon. Redefined.</p>
+    <p id="hero-date" class="hero-date" htp="text">Available October 15, 2026</p>
+  </div>
+
+</section>
+
+<!-- ===== SLIDE 2 — DESIGN & DISPLAY ===== -->
+<section id="slide-design" class="slide" htp="slide">
+
+  <h2 id="design-title" class="design-title" htp="text">Design &amp; Display</h2>
+
+  <div class="design-layout">
+
+    <!-- CSS-drawn phone front view -->
+    <div id="design-device" class="device-illustration" htp="fallback">
+      <div id="design-screen" class="screen-area">
+        <div id="design-glow" class="screen-glow"></div>
+      </div>
+    </div>
+
+    <!-- Callout labels around the device -->
+    <div class="callout-group">
+      <div id="callout-display" class="callout">
+        <div class="callout-label">Display</div>
+        <div id="callout-display-value" class="callout-value" htp="text">6.7" AMOLED</div>
+      </div>
+      <div id="callout-frame" class="callout">
+        <div class="callout-label">Frame</div>
+        <div id="callout-frame-value" class="callout-value" htp="text">Titanium Frame</div>
+      </div>
+      <div id="callout-glass" class="callout">
+        <div class="callout-label">Protection</div>
+        <div id="callout-glass-value" class="callout-value" htp="text">Ceramic Shield</div>
+      </div>
+      <div id="callout-water" class="callout">
+        <div class="callout-label">Durability</div>
+        <div id="callout-water-value" class="callout-value" htp="text">IP68 Water Resistant</div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ===== SLIDE 3 — PERFORMANCE SPECS TABLE ===== -->
+<section id="slide-specs" class="slide" htp="slide">
+
+  <h2 id="specs-title" class="specs-title" htp="text">Performance Specs</h2>
+
+  <table id="specs-table" class="specs-table" htp="table">
+    <thead>
+      <tr>
+        <th id="specs-col-component">Component</th>
+        <th id="specs-col-spec">Specification</th>
+        <th id="specs-col-benefit">Benefit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="spec-component-processor" htp="text">Processor</td>
+        <td id="spec-spec-processor" htp="text">A18 Bionic, 3nm</td>
+        <td id="spec-benefit-processor" htp="text">40% faster CPU, 50% GPU uplift</td>
+      </tr>
+      <tr>
+        <td id="spec-component-gpu" htp="text">GPU</td>
+        <td id="spec-spec-gpu" htp="text">6-Core Custom GPU</td>
+        <td id="spec-benefit-gpu" htp="text">Ray tracing, console-quality gaming</td>
+      </tr>
+      <tr>
+        <td id="spec-component-neural" htp="text">Neural Engine</td>
+        <td id="spec-spec-neural" htp="text">16-Core NPU, 35 TOPS</td>
+        <td id="spec-benefit-neural" htp="text">On-device AI, real-time translation</td>
+      </tr>
+      <tr>
+        <td id="spec-component-ram" htp="text">RAM</td>
+        <td id="spec-spec-ram" htp="text">12GB LPDDR5X</td>
+        <td id="spec-benefit-ram" htp="text">Seamless multitasking, pro workflows</td>
+      </tr>
+      <tr>
+        <td id="spec-component-storage" htp="text">Storage</td>
+        <td id="spec-spec-storage" htp="text">256GB / 512GB / 1TB NVMe</td>
+        <td id="spec-benefit-storage" htp="text">4.5 GB/s read, instant app launch</td>
+      </tr>
+      <tr>
+        <td id="spec-component-battery" htp="text">Battery</td>
+        <td id="spec-spec-battery" htp="text">5000 mAh Silicon-Carbon</td>
+        <td id="spec-benefit-battery" htp="text">2-day endurance, advanced chemistry</td>
+      </tr>
+      <tr>
+        <td id="spec-component-charging" htp="text">Charging</td>
+        <td id="spec-spec-charging" htp="text">65W HyperCharge</td>
+        <td id="spec-benefit-charging" htp="text">0-100% in 38 minutes</td>
+      </tr>
+    </tbody>
+  </table>
+
+</section>
+
+<!-- ===== SLIDE 4 — CAMERA SYSTEM ===== -->
+<section id="slide-camera" class="slide" htp="slide">
+
+  <div class="camera-layout">
+
+    <!-- CSS-drawn camera bump -->
+    <div class="camera-bump-area">
+      <div id="camera-bump" class="camera-bump" htp="fallback">
+        <div id="lens-main" class="lens-main"></div>
+        <div id="lens-small-1" class="lens-small ls1"></div>
+        <div id="lens-small-2" class="lens-small ls2"></div>
+        <div id="lens-small-3" class="lens-small ls3"></div>
+      </div>
+    </div>
+
+    <!-- Camera specs stacked vertically -->
+    <div class="camera-specs">
+      <div id="cam-spec-sensor" class="cam-spec-item">
+        <div id="cam-spec-sensor-value" class="cam-spec-value" htp="text">200MP Main Sensor</div>
+        <div class="cam-spec-label">Primary Camera</div>
+      </div>
+      <div id="cam-spec-aperture" class="cam-spec-item">
+        <div id="cam-spec-aperture-value" class="cam-spec-value" htp="text">f/1.6 Aperture</div>
+        <div class="cam-spec-label">Lens Speed</div>
+      </div>
+      <div id="cam-spec-zoom" class="cam-spec-item">
+        <div id="cam-spec-zoom-value" class="cam-spec-value" htp="text">10x Optical Zoom</div>
+        <div class="cam-spec-label">Telephoto</div>
+      </div>
+      <div id="cam-spec-video" class="cam-spec-item">
+        <div id="cam-spec-video-value" class="cam-spec-value" htp="text">8K Video Recording</div>
+        <div class="cam-spec-label">Resolution</div>
+      </div>
+      <div id="cam-spec-night" class="cam-spec-item">
+        <div id="cam-spec-night-value" class="cam-spec-value" htp="text">AI Night Mode</div>
+        <div class="cam-spec-label">Computational Photography</div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ===== SLIDE 5 — CAMERA SAMPLES ===== -->
+<section id="slide-samples" class="slide" htp="slide">
+
+  <h2 id="samples-title" class="samples-title" htp="text">Sample Photography</h2>
+
+  <div class="samples-grid">
+
+    <div id="sample-uw" class="sample-card">
+      <div id="sample-uw-image" class="sample-image sample-uw" htp="image">
+        <span class="sample-icon">&#127758;</span>
+      </div>
+      <p id="sample-uw-caption" class="sample-caption" htp="text">Ultra Wide</p>
+    </div>
+
+    <div id="sample-portrait" class="sample-card">
+      <div id="sample-portrait-image" class="sample-image sample-portrait" htp="image">
+        <span class="sample-icon">&#128100;</span>
+      </div>
+      <p id="sample-portrait-caption" class="sample-caption" htp="text">Portrait Mode</p>
+    </div>
+
+    <div id="sample-night" class="sample-card">
+      <div id="sample-night-image" class="sample-image sample-night" htp="image">
+        <span class="sample-icon">&#127769;</span>
+      </div>
+      <p id="sample-night-caption" class="sample-caption" htp="text">Night Mode</p>
+    </div>
+
+    <div id="sample-macro" class="sample-card">
+      <div id="sample-macro-image" class="sample-image sample-macro" htp="image">
+        <span class="sample-icon">&#127800;</span>
+      </div>
+      <p id="sample-macro-caption" class="sample-caption" htp="text">Macro</p>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ===== SLIDE 6 — BATTERY & CHARGING ===== -->
+<section id="slide-battery" class="slide" htp="slide">
+
+  <h2 id="battery-title" class="battery-title" htp="text">Battery &amp; Charging</h2>
+
+  <div class="battery-layout">
+
+    <!-- Battery icon area (CSS-drawn) -->
+    <div id="battery-icon" class="battery-icon" htp="fallback">
+      <div id="battery-cap" class="battery-cap"></div>
+      <div id="battery-body" class="battery-body">
+        <div id="battery-fill" class="battery-fill"></div>
+      </div>
+    </div>
+
+    <!-- Key stats -->
+    <div class="battery-stats">
+      <div id="battery-stat-capacity" class="battery-stat">
+        <div id="battery-stat-capacity-value" class="stat-value" htp="text">5000 mAh Battery</div>
+        <div class="stat-label">Silicon-Carbon Technology</div>
+      </div>
+      <div id="battery-stat-fast" class="battery-stat">
+        <div id="battery-stat-fast-value" class="stat-value" htp="text">65W Fast Charging</div>
+        <div class="stat-label">HyperCharge Turbo</div>
+      </div>
+      <div id="battery-stat-wireless" class="battery-stat">
+        <div id="battery-stat-wireless-value" class="stat-value" htp="text">50W Wireless</div>
+        <div class="stat-label">MagCharge Compatible</div>
+      </div>
+      <div id="battery-stat-life" class="battery-stat">
+        <div id="battery-stat-life-value" class="stat-value" htp="text">2-Day Battery Life</div>
+        <div class="stat-label">All-Day Heavy Use</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Charging comparison table -->
+  <table id="charge-table" class="charge-table" htp="table" style="margin-top:40px">
+    <thead>
+      <tr>
+        <th id="charge-col-metric">Charging Metric</th>
+        <th id="charge-col-time">Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="charge-metric-50" htp="text">0 to 50%</td>
+        <td id="charge-time-50" htp="text">15 minutes</td>
+      </tr>
+      <tr>
+        <td id="charge-metric-100" htp="text">0 to 100%</td>
+        <td id="charge-time-100" htp="text">38 minutes</td>
+      </tr>
+    </tbody>
+  </table>
+
+</section>
+
+<!-- ===== SLIDE 7 — COLOR OPTIONS ===== -->
+<section id="slide-colors" class="slide" htp="slide">
+
+  <h2 id="colors-title" class="colors-title" htp="text">Color Options</h2>
+
+  <div class="colors-row">
+
+    <div id="color-black" class="color-swatch">
+      <div id="color-black-circle" class="color-circle color-black" htp="image"></div>
+      <p id="color-black-name" class="color-name" htp="text">Midnight Black</p>
+    </div>
+
+    <div id="color-silver" class="color-swatch">
+      <div id="color-silver-circle" class="color-circle color-silver" htp="image"></div>
+      <p id="color-silver-name" class="color-name" htp="text">Titanium Silver</p>
+    </div>
+
+    <div id="color-blue" class="color-swatch">
+      <div id="color-blue-circle" class="color-circle color-blue" htp="image"></div>
+      <p id="color-blue-name" class="color-name" htp="text">Ocean Blue</p>
+    </div>
+
+    <div id="color-gold" class="color-swatch">
+      <div id="color-gold-circle" class="color-circle color-gold" htp="image"></div>
+      <p id="color-gold-name" class="color-name" htp="text">Sunset Gold</p>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ===== SLIDE 8 — PRICING & AVAILABILITY ===== -->
+<section id="slide-pricing" class="slide" htp="slide">
+
+  <!-- Decorative gradient strip -->
+  <div id="pricing-strip" class="pricing-strip" htp="fallback"></div>
+
+  <h2 id="pricing-title" class="pricing-title" htp="text">Pricing &amp; Availability</h2>
+
+  <!-- Pricing table -->
+  <table id="pricing-table" class="pricing-table" htp="table">
+    <thead>
+      <tr>
+        <th id="pricing-col-model">Model</th>
+        <th id="pricing-col-storage">Storage</th>
+        <th id="pricing-col-price">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="pricing-model-standard" htp="text">Nova X1 Standard</td>
+        <td id="pricing-storage-standard" htp="text">256GB</td>
+        <td id="pricing-price-standard" htp="text">$999</td>
+      </tr>
+      <tr>
+        <td id="pricing-model-plus" htp="text">Nova X1 Plus</td>
+        <td id="pricing-storage-plus" htp="text">512GB</td>
+        <td id="pricing-price-plus" htp="text">$1,199</td>
+      </tr>
+      <tr>
+        <td id="pricing-model-pro" htp="text">Nova X1 Pro</td>
+        <td id="pricing-storage-pro" htp="text">1TB</td>
+        <td id="pricing-price-pro" htp="text">$1,499</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Additional info -->
+  <div class="pricing-info">
+    <p id="pricing-release" class="pricing-release" htp="text">Available starting October 15, 2026</p>
+    <div class="pricing-cta">
+      <span id="pricing-btn-text" class="pricing-btn-text" htp="text">Pre-Order Now</span>
+      <span id="pricing-link" class="pricing-link" htp="text">Learn More</span>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===== SLIDE 9 — THANK YOU / CLOSING ===== -->
+<section id="slide-closing" class="slide" htp="slide">
+
+  <!-- Decorative particles/dots -->
+  <div id="closing-particles" class="closing-particles" htp="fallback">
+    <div class="closing-dot" style="left:5%;animation-delay:0s"></div>
+    <div class="closing-dot" style="left:12%;animation-delay:1s"></div>
+    <div class="closing-dot" style="left:20%;animation-delay:2s"></div>
+    <div class="closing-dot" style="left:28%;animation-delay:0.5s"></div>
+    <div class="closing-dot" style="left:35%;animation-delay:3s"></div>
+    <div class="closing-dot" style="left:42%;animation-delay:1.5s"></div>
+    <div class="closing-dot" style="left:50%;animation-delay:4s"></div>
+    <div class="closing-dot" style="left:58%;animation-delay:2.5s"></div>
+    <div class="closing-dot" style="left:65%;animation-delay:0.8s"></div>
+    <div class="closing-dot" style="left:72%;animation-delay:3.5s"></div>
+    <div class="closing-dot" style="left:80%;animation-delay:1.8s"></div>
+    <div class="closing-dot" style="left:88%;animation-delay:2.2s"></div>
+    <div class="closing-dot" style="left:95%;animation-delay:4.5s"></div>
+    <div class="closing-dot" style="left:15%;animation-delay:5s"></div>
+    <div class="closing-dot" style="left:55%;animation-delay:5.5s"></div>
+    <div class="closing-dot" style="left:75%;animation-delay:6s"></div>
+    <div class="closing-dot" style="left:8%;animation-delay:7s"></div>
+    <div class="closing-dot" style="left:90%;animation-delay:8s"></div>
+    <div class="closing-dot" style="left:32%;animation-delay:6.5s"></div>
+    <div class="closing-dot" style="left:68%;animation-delay:7.5s"></div>
+  </div>
+
+  <!-- Closing content -->
+  <div class="closing-content">
+    <h2 id="closing-thanks" class="closing-thanks" htp="text">Thank You</h2>
+    <p id="closing-tagline" class="closing-tagline" htp="text">Nova X1 — Beyond the horizon.</p>
+    <p id="closing-url" class="closing-url" htp="text">nova.com/x1</p>
+  </div>
+
+</section>
+
+<script>
+// ===== PARTICLE GENERATION FOR SLIDE 1 =====
+(function() {
+  'use strict';
+
+  // Generate additional particles dynamically for Slide 1
+  var heroSlide = document.getElementById('slide-hero');
+  var particleContainer = heroSlide.querySelector('[htp="fallback"]');
+
+  if (particleContainer && !particleContainer.dataset.seeded) {
+    particleContainer.dataset.seeded = 'true';
+    // Particles already declared in HTML for deterministic rendering
+  }
+
+  // ===== HTP READY SIGNAL =====
+  // Set after all DOM is fully parsed and any dynamic setup is complete
+  window.__HTP_READY__ = true;
+})();
+</script>
+
+</body>
+</html>

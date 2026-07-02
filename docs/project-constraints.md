@@ -22,11 +22,13 @@ htp/
 │   └── vite-plugin/               # @htp/vite-plugin — Vite 集成
 │
 ├── test/                          # 测试根目录（严格隔离，禁止混入 packages）
-│   ├── fixtures/                  # 测试用的 HTML / 静态资源
-│   │   └── vanilla/               # 纯 HTML 示例页（不含构建工具）
+│   ├── projects/                  # 测试用项目（多个完整项目，含构建工具）
+│   │   ├── vanilla-launch/        # 原生 HTML 手机发布会页面
+│   │   ├── vue-blog/              # Vue 3 + Vite 博客页面
+│   │   └── react-official/        # React + Vite 企业官网页面
 │   ├── scripts/                   # 可执行的 .js 测试脚本（禁止 .mjs）
 │   ├── unit/                      # 单元测试（vitest）
-│   └── output/                    # 测试生成的 .pptx 等产物（gitignore）
+│   └── output/                    # 测试生成的 .pptx 产物（gitignore，不含截图）
 │
 ├── examples/                      # 用户示例项目（完整可运行）
 │   └── vanilla/                   # 纯 HTML + 内联 runtime 的使用示例
@@ -53,7 +55,7 @@ htp/
 |------|:----:|:----:|:----:|:----:|:----:|
 | `packages/*/src/` | ✅ | ❌ | ❌ | ❌ | ❌ |
 | `packages/*/dist/` | ❌ | ❌ | ❌ | ❌ | ✅ |
-| `test/fixtures/` | ❌ | ✅ | ❌ | ❌ | ❌ |
+| `test/projects/` | ⚠️ 测试项目源码 | ✅ | ❌ | ❌ | ❌ |
 | `test/scripts/` | ❌ | ✅ | ❌ | ❌ | ❌ |
 | `test/output/` | ❌ | ❌ | ❌ | ❌ | ✅ |
 | `docs/` | ❌ | ❌ | ✅ | ❌ | ❌ |
@@ -76,37 +78,35 @@ htp/
 
 例外：JSDoc 标准标签保留英文（`@param`, `@returns`, `@throws`, `@see`）。
 
-### 2.2 函数注释格式（多行，≥3 行）
+### 2.2 函数注释格式（标准 JSDoc，中文正文）
 
-所有 `export` 函数、类方法、以及内部复杂度较高的 `function`，必须使用以下格式：
+所有 `export` 函数、类方法、以及内部复杂度较高的 `function`，必须使用标准 JSDoc 多行格式：
 
 ```typescript
 /**
- * ─────────────────────────────────────────────
  * <函数功能的一句话概述>
  *
- * <详细说明 — 这行开始是正文>
+ * <详细说明>
  * <可以有多行正文，描述算法思路、注意事项、边界条件、调用时机等>
- * ─────────────────────────────────────────────
  */
 export function myFunction(): void { ... }
 ```
+
+简单函数允许单行 `/** 做某件事 */`，不做行数强制。
 
 **规则详情：**
 
 | 规则 | 说明 |
 |------|------|
-| 最少行数 | **3 行**（不含 `/**` 和 `*/`） |
-| 第一行 | 分隔线 `───...`，长度与注释块等宽（约 45 个 `─` 字符） |
-| 中间行 | 正文：概述 + 详细说明，每行以 ` * ` 开头 |
-| 最后一行 | 分隔线，与第一行完全一致 |
-| 禁止 | 单行 `/** xxx */` 用于函数；参数说明使用 `@param` 而非自然语言 |
+| 格式 | 标准 JSDoc：`/**` 开头，`*/` 结尾，中间每行以 ` * ` 开头 |
+| 首行 | 函数功能的一句话概述 |
+| 正文 | 概述与正文之间空一行 ` *`，然后写详细说明 |
+| 禁止 | 分隔线（`───`）等装饰性字符；英文正文 |
 
 **正确示例：**
 
 ```typescript
 /**
- * ─────────────────────────────────────────────
  * 解析 CSS 颜色字符串为 RGB / HEX 统一结构
  *
  * 支持以下格式：
@@ -115,7 +115,6 @@ export function myFunction(): void { ... }
  * - rgb/rgba 函数记法
  * - hsl/hsla 函数记法
  * 透明色映射为 { r:0, g:0, b:0, a:0 }，非透明色统一附带 hex 字段。
- * ─────────────────────────────────────────────
  */
 export function resolveColor(cssColor: string): ParsedColor { ... }
 ```
@@ -123,17 +122,21 @@ export function resolveColor(cssColor: string): ParsedColor { ... }
 **错误示例（禁止）：**
 
 ```typescript
-// ❌ 单行注释用于函数
+// ❌ 单行 // 注释用于函数（信息量不足）
 export function foo() { ... }
 
-// ❌ 不足3行（只有正文没有结构行）
+// ❌ 带分隔线装饰
 /**
+ * ─────────────────────────────────────────────
  * 做某件事
+ * ─────────────────────────────────────────────
  */
 export function bar() { ... }
 
 // ❌ 英文注释
-// Resolve the input URL
+/**
+ * Resolve the input URL
+ */
 export function resolve() { ... }
 ```
 
@@ -149,25 +152,25 @@ const viewportWidth = 1920;
 const EMU_PER_INCH = 914400;
 ```
 
-**接口 / 类型成员**同样采用单行注释：
+**接口 / 类型成员**同样采用单行 `//` 注释（与普通变量一致，不使用 `/** */`）：
 
 ```typescript
 export interface HtpPptxTable {
-  /** 表格类型标记 */
+  // 表格类型标记
   type: "table";
-  /** 左上角 x 坐标（英寸） */
+  // 左上角 x 坐标（英寸）
   x: number;
-  /** 左上角 y 坐标（英寸） */
+  // 左上角 y 坐标（英寸）
   y: number;
-  /** 表格宽度（英寸） */
+  // 表格宽度（英寸）
   w: number;
-  /** 表格高度（英寸） */
+  // 表格高度（英寸）
   h: number;
-  /** 行数 */
+  // 行数
   rows: number;
-  /** 列数 */
+  // 列数
   cols: number;
-  /** 单元格数组（先行后列排列） */
+  // 单元格数组（先行后列排列）
   cells: HtpPptxTableCell[];
 }
 ```
@@ -178,11 +181,9 @@ export interface HtpPptxTable {
 
 ```typescript
 /**
- * ─────────────────────────────────────────────
  * <模块名> — <一句话职责描述>
  *
  * <详细说明此文件负责的功能范围>
- * ─────────────────────────────────────────────
  */
 ```
 
@@ -250,8 +251,10 @@ src/
 
 ```
 test/
-├── fixtures/          # 测试输入数据（HTML、JSON、图片）
-│   └── vanilla/       # 纯 HTML 的测试页面
+├── projects/          # 测试用项目（完整的可构建项目）
+│   ├── vanilla-launch/ # 原生 HTML 手机发布会页面（无构建工具）
+│   ├── vue-blog/       # Vue 3 + Vite 博客页面
+│   └── react-official/ # React + Vite 企业官网页面
 ├── scripts/           # 手动执行的验证脚本（.js，禁止 .mjs）
 │   ├── export.test.js # 导出流程集成测试
 │   └── ...
@@ -259,7 +262,7 @@ test/
 │   ├── core.test.ts
 │   ├── pptx.test.ts
 │   └── ...
-└── output/            # 测试产物（.pptx、截图、debug 输出）
+└── output/            # 测试产物（仅 .pptx，禁止保存截图）
 ```
 
 ### 4.2 测试脚本规范
@@ -328,7 +331,7 @@ node test/scripts/export.test.js --debug
 1. 可**独立运行**（从根目录一键启动）
 2. 附带 `README.md` 说明启动步骤
 3. 示例 HTML 中**优先使用 `@htp/runtime` 库**，而非手写内联 manifest
-4. 如需静态 HTML 示例（不依赖构建），可放在 `test/fixtures/` 下
+4. 如需静态 HTML 示例（不依赖构建），可放在 `test/projects/` 下
 
 ---
 

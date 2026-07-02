@@ -1,11 +1,9 @@
 /**
- * ─────────────────────────────────────────────
  * ppt/slides/slide{N}.xml 生成器
  *
  * 为单张幻灯片构建完整的 p:sld XML，包括形状树、
  * 背景图片和动画时序节点。接收上层组装的 SlideDef 定义，
  * 将其中的文本、图片、表格对象转换为对应的 DrawingML 片段。
- * ─────────────────────────────────────────────
  */
 
 import { NS, esc } from "./builder";
@@ -65,13 +63,11 @@ export interface SlideDef {
 // ---------------------------------------------------------------------------
 
 /**
- * ─────────────────────────────────────────────
  * 根据 SlideDef 构建单张幻灯片的完整 XML
  *
  * 组装 p:sld 根节点，包含形状树（spTree）、背景和
  * 动画时序节点。遍历 objects 数组将每个形状分发到
  * 对应的 DrawingML 构建函数。
- * ─────────────────────────────────────────────
  */
 export function buildSlide(slide: SlideDef): string {
   const shapeIdCounter = slide.objects.length > 0

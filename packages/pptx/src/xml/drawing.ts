@@ -1,11 +1,9 @@
 /**
- * ─────────────────────────────────────────────
  * DrawingML 辅助函数 — 形状、填充、变换等可复用 XML 片段
  *
  * 提供 DrawingML 命名空间下的基础构建块，包括坐标变换、
  * 预设几何形状、纯色/渐变填充、边框、图片填充、文本框、
  * 表格和幻灯片背景。所有其他幻灯片级 XML 模块均依赖此模块。
- * ─────────────────────────────────────────────
  */
 
 import { NS, esc } from "./builder";
@@ -24,12 +22,10 @@ export interface Xfrm {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 构建 a:xfrm 坐标变换节点
  *
  * 包含位置（a:off）、尺寸（a:ext）和可选的旋转角度，
  * 所有值以 EMU 为单位。
- * ─────────────────────────────────────────────
  */
 export function buildXfrm(xfrm: Xfrm): string {
   const rotAttr = xfrm.rot !== undefined ? ` rot="${Math.round(xfrm.rot)}"` : "";
@@ -44,11 +40,9 @@ export function buildXfrm(xfrm: Xfrm): string {
 // ---------------------------------------------------------------------------
 
 /**
- * ─────────────────────────────────────────────
  * 构建 a:prstGeom 预设几何形状节点
  *
  * 默认为 "rect"（矩形），可通过 prst 参数指定其他预设形状。
- * ─────────────────────────────────────────────
  */
 export function buildPrstGeom(prst: string = "rect"): string {
   return `<a:prstGeom prst="${esc(prst)}"><a:avLst/></a:prstGeom>`;
@@ -59,12 +53,10 @@ export function buildPrstGeom(prst: string = "rect"): string {
 // ---------------------------------------------------------------------------
 
 /**
- * ─────────────────────────────────────────────
  * 构建 a:solidFill 纯色填充节点
  *
  * 接收十六进制颜色值（如 "FF0000" 或 "#FF0000"），
  * 自动去除 # 前缀并转为大写。
- * ─────────────────────────────────────────────
  */
 export function buildSolidFill(colorHex: string): string {
   const clean = colorHex.replace("#", "").toUpperCase();
@@ -76,12 +68,10 @@ export function buildSolidFill(colorHex: string): string {
 // ---------------------------------------------------------------------------
 
 /**
- * ─────────────────────────────────────────────
  * 构建 a:gradFill 线性渐变填充节点
  *
  * 接收角度（度，0 = 从左到右）和色标数组，
  * 转换为 DrawingML 方向角度并生成渐变 XML。
- * ─────────────────────────────────────────────
  */
 export function buildGradientFill(
   angle: number,
@@ -109,12 +99,10 @@ export function buildGradientFill(
 // ---------------------------------------------------------------------------
 
 /**
- * ─────────────────────────────────────────────
  * 构建 a:ln 线条/边框节点
  *
  * 支持 solid（实线）、dashed（虚线）、dotted（点线）
  * 和 none（无边框）四种样式。
- * ─────────────────────────────────────────────
  */
 export function buildLn(
   widthEmu: number,
@@ -137,11 +125,9 @@ export function buildLn(
 // ---------------------------------------------------------------------------
 
 /**
- * ─────────────────────────────────────────────
  * 构建 a:blipFill 图片填充节点
  *
  * 通过关系 ID 引用图片，使用拉伸填充模式。
- * ─────────────────────────────────────────────
  */
 export function buildBlipFill(rId: string): string {
   return `<a:blipFill dpi="0" rotWithShape="1">
@@ -155,12 +141,10 @@ export function buildBlipFill(rId: string): string {
 // ---------------------------------------------------------------------------
 
 /**
- * ─────────────────────────────────────────────
  * 构建 p:pic 图片形状节点
  *
  * 生成包含非可视属性、图片填充和形状属性的完整图片形状，
  * 用于在幻灯片中放置图片。
- * ─────────────────────────────────────────────
  */
 export function buildPic(
   shapeId: number,
@@ -207,12 +191,10 @@ export interface ParagraphDef {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 构建 p:sp 文本框形状节点
  *
  * 生成包含非可视属性、坐标变换、文本框主体和段落内容的
  * 完整文本框形状。支持自定义内边距和文本换行模式。
- * ─────────────────────────────────────────────
  */
 export function buildTextBox(
   shapeId: number,
@@ -258,12 +240,10 @@ export function buildTextBox(
 }
 
 /**
- * ─────────────────────────────────────────────
  * 构建 a:p 段落节点
  *
  * 遍历段落中的文本运行（runs），为每个 run 生成 a:r 元素，
  * 并在末尾附加必需的 a:endParaRPr 节点。
- * ─────────────────────────────────────────────
  */
 function buildParagraph(para: ParagraphDef): string {
   const alignAttr = para.align ? ` algn="${esc(para.align)}"` : "";
@@ -280,12 +260,10 @@ function buildParagraph(para: ParagraphDef): string {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 构建 a:r 文本运行节点
  *
  * 生成包含运行属性（字号、粗体、斜体、颜色、字体）
  * 和文本内容的 a:r 元素。
- * ─────────────────────────────────────────────
  */
 function buildRun(run: TextRun): string {
   let rPr = "";
@@ -350,12 +328,10 @@ export interface TableDef {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 构建 p:graphicFrame 表格形状节点
  *
  * 生成包含表格网格、行列定义的完整 graphicFrame 形状。
  * 若未指定列宽或行高，则平均分配可用空间。
- * ─────────────────────────────────────────────
  */
 export function buildTable(
   shapeId: number,
@@ -406,12 +382,10 @@ export function buildTable(
 }
 
 /**
- * ─────────────────────────────────────────────
  * 构建 a:tc 表格单元格节点
  *
  * 生成包含填充色、内边距、垂直对齐、边框和文本内容的
  * 单个表格单元格。
- * ─────────────────────────────────────────────
  */
 function buildTableCell(
   cell: TableCellDef | undefined,
@@ -487,12 +461,10 @@ function buildTableCell(
 }
 
 /**
- * ─────────────────────────────────────────────
  * 构建单元格边框节点
  *
  * 生成单个方向（top/bottom/left/right）的边框 XML，
  * 使用 a:ln 子元素指定宽度和颜色。
- * ─────────────────────────────────────────────
  */
 function buildCellBorder(
   side: string,
@@ -508,11 +480,9 @@ function buildCellBorder(
 // ---------------------------------------------------------------------------
 
 /**
- * ─────────────────────────────────────────────
  * 构建 p:bg 幻灯片背景节点
  *
  * 通过关系 ID 引用背景图片，使用拉伸填充模式覆盖整个幻灯片。
- * ─────────────────────────────────────────────
  */
 export function buildSlideBackground(bgRId: string): string {
   return `<p:bg>

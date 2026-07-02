@@ -1,7 +1,5 @@
 /**
- * ────────────────────────────────────────────────────────────────────────────────
  * PPTX 甲板组装模块
- * ────────────────────────────────────────────────────────────────────────────────
  * 本模块负责将 Playwright 页面中提取的 DOM 数据组装为 HtpPptxDeck 对象模型。
  * 对每一张幻灯片执行以下处理流程：
  *   1. 隐藏可编辑节点（文本、表格）
@@ -12,7 +10,6 @@
  *   6. 提取图片节点 → PNG 截图
  *   7. 提取回退节点 → PNG 截图（用于无法原生映射的复杂视觉区域）
  *   8. 按 z-order 分层：背景 → 图片 → 表格 → 文本（从底到顶）
- * ────────────────────────────────────────────────────────────────────────────────
  */
 
 import type { Page, ElementHandle } from "playwright";
@@ -48,9 +45,7 @@ export interface AssembleResult {
 }
 
 /**
- * ────────────────────────────────────────────────────────────────────────────────
  * 从已渲染的页面中组装完整的 PPTX 甲板
- * ────────────────────────────────────────────────────────────────────────────────
  * 这是幻灯片装配的核心函数。它遍历页面中发现的每一张幻灯片，
  * 依次提取各类内容节点（回退区域、图片、表格、文本），
  * 并将它们组装为 HtpPptxDeck 数据结构。
@@ -59,7 +54,6 @@ export interface AssembleResult {
  *   1. 隐藏所有可编辑节点 → 截取幻灯片背景
  *   2. 恢复可编辑节点
  *   3. 提取各类内容对象并按 z-order 排列
- * ────────────────────────────────────────────────────────────────────────────────
  */
 export async function assembleDeck(
   page: Page,
@@ -99,7 +93,7 @@ export async function assembleDeck(
 
     // 步骤 1-2：隐藏可编辑节点，截取幻灯片背景
     await hideEditableNodes(page, slideInfo.selector, marker.typeAttr);
-    const bgScreenshot = await slideEl.screenshot({ type: "png" });
+    const bgScreenshot = await slideEl.screenshot({ type: "png", animations: "disabled" });
     await showEditableNodes(page, slideInfo.selector, marker.typeAttr);
 
     const background: HtpPptxImage = {
@@ -156,7 +150,7 @@ export async function assembleDeck(
             const tblEls = await slideEl.$$(`[${marker.typeAttr}="table"]`);
             const tblIdx = tables.indexOf(tbl);
             if (tblEls[tblIdx]) {
-              const ss = await tblEls[tblIdx].screenshot({ type: "png" });
+              const ss = await tblEls[tblIdx].screenshot({ type: "png", animations: "disabled" });
               objects.push({
                 type: "image",
                 x: tbl.table.x,
@@ -219,49 +213,56 @@ export async function assembleDeck(
 // ── 内部辅助函数 ────────────────────────────────────────────────────────────────
 
 /**
- * 隐藏幻灯片中的可编辑节点（文本和表格），为背景截图做准备。
- * 通过设置 visibility: hidden 和 data-* 标记实现。
+ * 隐藏页面上所有可编辑节点（文本和表格），为背景截图做准备。
+ * 对全页所有 [htp="text"] 和 [htp="table"] 元素设置 visibility: hidden，
+ * 以防止固定定位元素（如导航栏）的文本残留在幻灯片截图中。
  */
 async function hideEditableNodes(
   page: Page,
-  slideSelector: string,
+  _slideSelector: string,
   typeAttr: string,
 ): Promise<void> {
   await page.evaluate(
-    ({ sel, attr }) => {
-      const slide = document.querySelector(sel);
-      if (!slide) return;
-      const nodes = slide.querySelectorAll(`[${attr}="text"], [${attr}="table"]`);
-      nodes.forEach((el) => {
-        (el as HTMLElement).style.visibility = "hidden";
-        (el as HTMLElement).dataset.__htpHidden = "1";
+    ({ attr }) => {
+      // 隐藏所有已标记的可编辑/可截图元素，确保背景截图不包含它们
+      const allTypes = ["text", "table", "image", "fallback"];
+      allTypes.forEach((type) => {
+        document.querySelectorAll(`[${attr}="${type}"]`).forEach((el) => {
+          const htmlEl = el as HTMLElement;
+          if (!htmlEl.dataset.__htpHidden) {
+            htmlEl.dataset.__htpHidden = "1";
+            htmlEl.style.visibility = "hidden";
+          }
+        });
       });
     },
-    { sel: slideSelector, attr: typeAttr },
+    { attr: typeAttr },
   );
 }
 
 /**
  * 恢复之前被隐藏的可编辑节点，使其重新在页面上可见。
- * 仅恢复被 hideEditableNodes 标记过的元素。
+ * 仅恢复被 hideEditableNodes 标记过（dataset.__htpHidden === "1"）的元素。
  */
 async function showEditableNodes(
   page: Page,
-  slideSelector: string,
+  _slideSelector: string,
   typeAttr: string,
 ): Promise<void> {
   await page.evaluate(
-    ({ sel, attr }) => {
-      const slide = document.querySelector(sel);
-      if (!slide) return;
-      const nodes = slide.querySelectorAll(`[${attr}="text"], [${attr}="table"]`);
-      nodes.forEach((el) => {
-        if ((el as HTMLElement).dataset.__htpHidden === "1") {
-          (el as HTMLElement).style.visibility = "";
-          delete (el as HTMLElement).dataset.__htpHidden;
-        }
+    ({ attr }) => {
+      // 恢复所有之前被隐藏的元素
+      const allTypes = ["text", "table", "image", "fallback"];
+      allTypes.forEach((type) => {
+        document.querySelectorAll(`[${attr}="${type}"]`).forEach((el) => {
+          const htmlEl = el as HTMLElement;
+          if (htmlEl.dataset.__htpHidden === "1") {
+            htmlEl.style.visibility = "";
+            delete htmlEl.dataset.__htpHidden;
+          }
+        });
       });
     },
-    { sel: slideSelector, attr: typeAttr },
+    { attr: typeAttr },
   );
 }

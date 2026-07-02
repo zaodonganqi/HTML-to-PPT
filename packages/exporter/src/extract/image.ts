@@ -1,7 +1,5 @@
 /**
- * ────────────────────────────────────────────────────────────────────────────────
  * 图片节点提取模块
- * ────────────────────────────────────────────────────────────────────────────────
  * 从幻灯片元素中提取带有 [htp="image"] 标记的 HTML 元素，
  * 使用 Playwright 的 element.screenshot() 进行精确渲染截图。
  *
@@ -13,7 +11,6 @@
  * 提取流程分两步：
  *   1. 在浏览器上下文中获取所有图片元素的位置和尺寸（视口 → 英寸映射）
  *   2. 返回 Node.js 端使用 Playwright 对每个元素逐一截图
- * ────────────────────────────────────────────────────────────────────────────────
  */
 
 import type { Page, ElementHandle } from "playwright";
@@ -42,9 +39,7 @@ export interface ExtractedImage {
 }
 
 /**
- * ────────────────────────────────────────────────────────────────────────────────
  * 从幻灯片元素中提取图片节点
- * ────────────────────────────────────────────────────────────────────────────────
  * 分两阶段处理：
  *
  * 阶段 1（浏览器上下文）：
@@ -55,7 +50,6 @@ export interface ExtractedImage {
  *   使用 Playwright 的 element.screenshot() 对每个图片元素逐一截图。
  *   截图成功 → 返回包含 PNG 数据的 HtpPptxImage
  *   截图失败 → 返回空数据的图片对象并附带 HTP_NODE_SCREENSHOT_FAILED 警告
- * ────────────────────────────────────────────────────────────────────────────────
  */
 export async function extractImageNodes(
   page: Page,
@@ -87,9 +81,11 @@ export async function extractImageNodes(
         const htmlEl = el as HTMLElement;
         const rect = htmlEl.getBoundingClientRect();
 
+        // 计算相对于幻灯片元素的位置（而非相对于视口）
+        const slideRect = slideEl.getBoundingClientRect();
         results.push({
-          x: rect.x / vw * dw,
-          y: rect.y / vh * dh,
+          x: (rect.x - slideRect.x) / vw * dw,
+          y: (rect.y - slideRect.y) / vh * dh,
           w: rect.width / vw * dw,
           h: rect.height / vh * dh,
           isFallback: false,
@@ -117,7 +113,7 @@ export async function extractImageNodes(
       // 通过 slideHandle 定位图片元素
       const imgEls = await slideHandle.$$(`[${marker.typeAttr}="image"]`);
       if (imgEls[i]) {
-        const screenshot = await imgEls[i].screenshot({ type: "png" });
+        const screenshot = await imgEls[i].screenshot({ type: "png", animations: "disabled" });
         results.push({
           image: {
             type: "image",

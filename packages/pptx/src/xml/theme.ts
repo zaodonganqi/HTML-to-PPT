@@ -1,22 +1,18 @@
 /**
- * ─────────────────────────────────────────────
  * ppt/theme/theme1.xml 生成器 — 最小 Office 主题
  *
  * 生成包含配色方案、字体方案和格式方案的 Office 主题 XML。
  * 默认使用 HTP 配色和 Arial 字体。
- * ─────────────────────────────────────────────
  */
 
 import { NS, esc } from "./builder";
 
 /**
- * ─────────────────────────────────────────────
  * 构建最小 Office 主题 XML
  *
  * 返回包含 12 色配色方案（dk1/lt1/dk2/lt2 + 6 个 accent +
  * hlink/folHlink）、Arial 字体方案和标准格式方案的 a:theme 文档。
  * 可通过 opts.name 自定义主题名称。
- * ─────────────────────────────────────────────
  */
 export function buildTheme(opts?: { name?: string }): string {
   const name = opts?.name || "HTP Default Theme";

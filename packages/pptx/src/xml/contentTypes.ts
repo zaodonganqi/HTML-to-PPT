@@ -1,10 +1,8 @@
 /**
- * ─────────────────────────────────────────────
  * [Content_Types].xml 生成器
  *
  * 根据幻灯片、图片和主题的数量生成 OOXML 包所需的
  * Content_Types.xml 内容，定义每个部件的 MIME 类型映射。
- * ─────────────────────────────────────────────
  */
 
 import { esc } from "./builder";
@@ -16,12 +14,10 @@ export interface ContentTypeEntry {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 根据内容类型条目列表生成完整的 [Content_Types].xml
  *
  * 包含默认扩展名映射（rels、xml、png、jpeg、jpg），
  * 以及调用方传入的 Override 条目。
- * ─────────────────────────────────────────────
  */
 export function buildContentTypes(entries: ContentTypeEntry[]): string {
   const defaults = [
@@ -48,12 +44,10 @@ export function buildContentTypes(entries: ContentTypeEntry[]): string {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 为指定数量的幻灯片构建 ContentType 条目列表
  *
  * 根据 slideCount、imageCount、themeCount 生成所有部件的
  * ContentType 映射条目，供 buildContentTypes() 使用。
- * ─────────────────────────────────────────────
  */
 export function buildContentTypeEntries(
   slideCount: number,

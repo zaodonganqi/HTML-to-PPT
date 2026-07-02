@@ -1,12 +1,10 @@
 /**
- * ─────────────────────────────────────────────
  * ZIP 组装层 — 收集所有 XML 部件与二进制图片，产出 .pptx 缓冲区
  *
  * 将所有幻灯片数据、图片资源、关系文件和元数据组装为一个
  * 符合 Office Open XML 规范的 ZIP 包。
  * 负责图片全局索引分配、幻灯片对象到 DrawingML 的映射、
  * 以及动画时序 XML 的注入。
- * ─────────────────────────────────────────────
  */
 
 import JSZip from "jszip";
@@ -29,13 +27,11 @@ import { inchToEmu } from "@htp/core";
 import type { HtpPptxDeck } from "./index";
 
 /**
- * ─────────────────────────────────────────────
  * 从 Deck 对象模型构建完整的 .pptx ZIP 缓冲区
  *
  * 收集所有 XML 部件（Content_Types、rels、docProps、presentation、
  * slides、masters、layouts、theme）和二进制图片数据，
  * 组装为一个标准的 Office Open XML ZIP 包。
- * ─────────────────────────────────────────────
  */
 export async function buildPptxZip(deck: HtpPptxDeck): Promise<Buffer> {
   const zip = new JSZip();

@@ -1,7 +1,5 @@
 /**
- * ────────────────────────────────────────────────────────────────────────────────
  * 回退区域提取模块
- * ────────────────────────────────────────────────────────────────────────────────
  * 从幻灯片元素中提取带有 [htp="fallback"] 标记的 HTML 区域，
  * 将其渲染为 PNG 截图以嵌入 PPTX。
  *
@@ -13,7 +11,6 @@
  * 提取流程：
  *   1. 在浏览器上下文中获取所有回退区域的边界框（视口坐标 → 英寸映射）
  *   2. 返回 Node.js 端使用 Playwright 逐区域截图
- * ────────────────────────────────────────────────────────────────────────────────
  */
 
 import type { Page, ElementHandle } from "playwright";
@@ -42,9 +39,7 @@ export interface ExtractedFallback {
 }
 
 /**
- * ────────────────────────────────────────────────────────────────────────────────
  * 从幻灯片元素中提取回退区域截图
- * ────────────────────────────────────────────────────────────────────────────────
  * 分两阶段处理：
  *
  * 阶段 1（浏览器上下文）：
@@ -55,7 +50,6 @@ export interface ExtractedFallback {
  *   使用 Playwright 的 element.screenshot() 对每个回退区域逐一截图。
  *   截图成功 → 返回包含 PNG 数据的 HtpPptxImage
  *   截图失败 → 返回空数据的图片对象并附带 HTP_NODE_SCREENSHOT_FAILED 警告
- * ────────────────────────────────────────────────────────────────────────────────
  */
 export async function extractFallbackNodes(
   page: Page,
@@ -82,9 +76,11 @@ export async function extractFallbackNodes(
 
       fallbackEls.forEach((el) => {
         const rect = el.getBoundingClientRect();
+        // 计算相对于幻灯片元素的位置（而非相对于视口）
+        const slideRect = slideEl.getBoundingClientRect();
         results.push({
-          x: rect.x / vw * dw,
-          y: rect.y / vh * dh,
+          x: (rect.x - slideRect.x) / vw * dw,
+          y: (rect.y - slideRect.y) / vh * dh,
           w: rect.width / vw * dw,
           h: rect.height / vh * dh,
         });
@@ -110,7 +106,7 @@ export async function extractFallbackNodes(
     try {
       const fbEls = await slideHandle.$$(`[${marker.typeAttr}="fallback"]`);
       if (fbEls[i]) {
-        const screenshot = await fbEls[i].screenshot({ type: "png" });
+        const screenshot = await fbEls[i].screenshot({ type: "png", animations: "disabled" });
         results.push({
           image: {
             type: "image",

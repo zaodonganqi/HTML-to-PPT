@@ -1,14 +1,12 @@
 #!/usr/bin/env node
 
 /**
- * ────────────────────────────────────────────────────────────
  * @htp/cli — HTP 命令行接口
  *
  * 将 HTML 页面导出为 PowerPoint 演示文稿的命令行工具。
  * 支持自定义视口尺寸、幻灯片布局、等待策略、文本导出模式、
  * 动画模式以及调试输出等选项。
  * 详细设计参见 docs/design-spec.md §10。
- * ────────────────────────────────────────────────────────────
  */
 
 import { Command } from "commander";
@@ -72,7 +70,7 @@ program
         text: { defaultMode: options.text as any },
         animation: { mode: options.animation as any },
         debug: options.debug
-          ? { outputDir: options.debug, saveScreenshots: true, saveManifest: true }
+          ? { outputDir: options.debug, saveManifest: true }
           : undefined,
         timeout: parseInt(options.timeout, 10),
       });

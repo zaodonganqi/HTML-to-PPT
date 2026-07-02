@@ -1,5 +1,4 @@
 /**
- * ─────────────────────────────────────────────
  * @htp/core — 共享类型定义、常量与工具函数
  *
  * 本模块是整个 HTP 项目的基础层，零外部依赖，仅包含纯 TypeScript 代码。
@@ -15,7 +14,6 @@
  * - HTP 动画效果 → PowerPoint MsoAnimEffect 映射表
  *
  * 详细设计参见 docs/design-spec.md
- * ─────────────────────────────────────────────
  */
 
 // ---------------------------------------------------------------------------
@@ -262,12 +260,10 @@ export const DEFAULT_VIEWPORT = { width: 1920, height: 1080 } as const;
 export const DEFAULT_SLIDE_SIZE = { width: 13.333, height: 7.5 } as const;
 
 /**
- * ─────────────────────────────────────────────
  * 将像素值转换为英寸值
  *
  * 根据视口像素大小和幻灯片英寸尺寸，按比例完成换算。
  * 如果视口尺寸为 0，直接返回 0 以避免除零错误。
- * ─────────────────────────────────────────────
  */
 export function pxToInches(
   px: number,
@@ -279,12 +275,10 @@ export function pxToInches(
 }
 
 /**
- * ─────────────────────────────────────────────
  * 将像素值转换为 EMU（English Metric Units）
  *
  * 先将像素转换为英寸，再乘以 EMU_PER_INCH 常量。
  * 这是 Office Open XML 中使用的标准长度单位。
- * ─────────────────────────────────────────────
  */
 export function pxToEmu(
   px: number,
@@ -295,35 +289,29 @@ export function pxToEmu(
 }
 
 /**
- * ─────────────────────────────────────────────
  * 将英寸值转换为 EMU
  *
  * 直接乘法换算，1 英寸 = 914400 EMU。
- * ─────────────────────────────────────────────
  */
 export function inchToEmu(inches: number): number {
   return inches * EMU_PER_INCH;
 }
 
 /**
- * ─────────────────────────────────────────────
  * 将点（point）值转换为 EMU
  *
  * 直接乘法换算，1 点 = 12700 EMU。
  * PowerPoint 中的字号单位即为点。
- * ─────────────────────────────────────────────
  */
 export function ptToEmu(points: number): number {
   return points * EMU_PER_POINT;
 }
 
 /**
- * ─────────────────────────────────────────────
  * 将 CSS px 字号转换为 PowerPoint 点数
  *
  * 换算链：CSS px → 英寸（基于视口高度比例）→ 点数。
  * 这是文本节点提取时字号计算的核心函数。
- * ─────────────────────────────────────────────
  */
 export function cssPxToPt(
   cssPx: number,
@@ -506,12 +494,10 @@ const NAMED_COLORS: Record<string, string> = {
 };
 
 /**
- * ─────────────────────────────────────────────
  * 将十六进制颜色字符串转换为 RGB 分量
  *
  * 支持 3 位（#abc → #aabbcc）和 6 位（#aabbcc）格式。
  * 该函数为内部工具，由 resolveColor() 调用。
- * ─────────────────────────────────────────────
  */
 function hexToRgb(hex: string): { r: number; g: number; b: number } {
   const clean = hex.replace("#", "");
@@ -530,11 +516,9 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 将 RGB 三个数值通道转换为十六进制颜色字符串
  *
  * 每个通道会被 clamp 到 0–255 范围后再转换为两位十六进制数。
- * ─────────────────────────────────────────────
  */
 function rgbToHex(r: number, g: number, b: number): string {
   const clamp = (v: number) => Math.max(0, Math.min(255, Math.round(v)));
@@ -543,12 +527,10 @@ function rgbToHex(r: number, g: number, b: number): string {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 解析 rgb / rgba 函数字符串为 ParsedColor
  *
  * 支持百分比值（如 rgb(100%, 0%, 0%)）和整数（如 rgb(255, 0, 0)）。
  * 如果字符串格式不匹配则返回 null。
- * ─────────────────────────────────────────────
  */
 function parseRgbaString(s: string): ParsedColor | null {
   const m = s.match(
@@ -565,12 +547,10 @@ function parseRgbaString(s: string): ParsedColor | null {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 解析 hsl / hsla 函数字符串为 ParsedColor
  *
  * 实现标准 HSL → RGB 转换算法。
  * 色相为角度制（0–360），饱和度与亮度为百分比。
- * ─────────────────────────────────────────────
  */
 function parseHslString(s: string): ParsedColor | null {
   const m = s.match(
@@ -610,7 +590,6 @@ function parseHslString(s: string): ParsedColor | null {
 }
 
 /**
- * ─────────────────────────────────────────────
  * 解析任意 CSS 颜色字符串为统一的 ParsedColor 结构
  *
  * 支持以下 CSS 颜色格式：
@@ -619,7 +598,6 @@ function parseHslString(s: string): ParsedColor | null {
  * - rgb / rgba 函数记法（支持百分比）
  * - hsl / hsla 函数记法
  * 无法识别的输入统一返回黑色（#000000）。
- * ─────────────────────────────────────────────
  */
 export function resolveColor(cssColor: string): ParsedColor {
   if (!cssColor) return { hex: "#000000", r: 0, g: 0, b: 0 };
@@ -673,7 +651,6 @@ export function resolveColor(cssColor: string): ParsedColor {
 // ---------------------------------------------------------------------------
 
 /**
- * ─────────────────────────────────────────────
  * 从 CSS font-family 字符串中提取首选字体名
  *
  * 解析规则：
@@ -681,7 +658,6 @@ export function resolveColor(cssColor: string): ParsedColor {
  * - 去除首尾引号（单引号或双引号）
  * - 跳过 serif, sans-serif, monospace 等通用回退字体
  * - 如果所有值都是通用字体或输入为空，返回 "Arial" 作为默认值
- * ─────────────────────────────────────────────
  */
 export function parseFontFamily(cssFamily: string): string {
   if (!cssFamily) return "Arial";
@@ -712,14 +688,12 @@ export function parseFontFamily(cssFamily: string): string {
 // ---------------------------------------------------------------------------
 
 /**
- * ─────────────────────────────────────────────
  * 为指定 DOM 元素构造一个唯一的 CSS 选择器路径
  *
  * 优先使用元素的 id 属性（最高特异性）。
  * 如果没有 id，则从当前元素向上遍历到 body，生成 tag + class 路径。
  * 此函数用于在 manifest 中记录节点的 DOM 位置，以便 exporter 能精确还原。
  * ⚠️ 注意：此函数运行在浏览器上下文中，依赖 document 全局对象。
- * ─────────────────────────────────────────────
  */
 export function buildSelector(el: Element): string {
   if (el.id) return `#${CSS.escape(el.id)}`;
@@ -749,13 +723,11 @@ export function buildSelector(el: Element): string {
 // ---------------------------------------------------------------------------
 
 /**
- * ─────────────────────────────────────────────
  * 深度合并两个对象（用于配置覆盖）
  *
  * 递归地将 source 对象的属性合并到 target 对象的浅拷贝中。
  * 对于嵌套对象执行深度合并，对于数组和基本类型则直接覆盖。
  * ⚠️ 注意：此函数不会修改原始 target 对象。
- * ─────────────────────────────────────────────
  */
 export function deepMerge<T extends Record<string, any>>(
   target: T,
@@ -779,13 +751,11 @@ export function deepMerge<T extends Record<string, any>>(
 // ---------------------------------------------------------------------------
 
 /**
- * ─────────────────────────────────────────────
  * HTP 动画效果名称 → PowerPoint MsoAnimEffect ID 的映射表
  *
  * PowerPoint 的动画 XML（p:timing）使用数值 ID 来标识动画效果类型。
  * 此映射表将 HTP 的语义化效果名称（如 "fly-left"）转换为其对应的
  * MsoAnimEffect 数值常量，供 @htp/pptx 在生成 animation timing XML 时使用。
- * ─────────────────────────────────────────────
  */
 export const HTP_TO_MSO_ANIM_EFFECT: Record<string, number> = {
   appear: 1,       // msoAnimEffectAppear
