@@ -13,11 +13,12 @@ import {
   buildRootRels,
   buildPresentationRels,
   buildSlideRelsWithImages,
+  buildSlideLayoutRels,
   buildRels,
   REL_TYPE,
 } from "./xml/rels";
 import { buildCoreProps, buildAppProps } from "./xml/docProps";
-import { buildPresentation } from "./xml/presentation";
+import { buildPresentation, buildPresProps, buildViewProps, buildTableStyles } from "./xml/presentation";
 import { buildSlide, SlideDef } from "./xml/slide";
 import { buildSlideLayout } from "./xml/slideLayout";
 import { buildSlideMaster } from "./xml/slideMaster";
@@ -74,10 +75,13 @@ export async function buildPptxZip(deck: HtpPptxDeck): Promise<Buffer> {
 
   // 3. docProps/
   zip.folder("docProps")!.file("core.xml", buildCoreProps());
-  zip.folder("docProps")!.file("app.xml", buildAppProps());
+  zip.folder("docProps")!.file("app.xml", buildAppProps(slideCount));
 
   // 4. ppt/presentation.xml
   zip.folder("ppt")!.file("presentation.xml", buildPresentation(slideCount));
+  zip.folder("ppt")!.file("presProps.xml", buildPresProps());
+  zip.folder("ppt")!.file("viewProps.xml", buildViewProps());
+  zip.folder("ppt")!.file("tableStyles.xml", buildTableStyles());
 
   // 5. ppt/_rels/presentation.xml.rels
   zip.folder("ppt")!.folder("_rels")!.file(
@@ -105,6 +109,10 @@ export async function buildPptxZip(deck: HtpPptxDeck): Promise<Buffer> {
 
   // 7. ppt/slideLayouts/
   zip.folder("ppt")!.folder("slideLayouts")!.file("slideLayout1.xml", buildSlideLayout());
+  zip.folder("ppt")!.folder("slideLayouts")!.folder("_rels")!.file(
+    "slideLayout1.xml.rels",
+    buildSlideLayoutRels(),
+  );
 
   // 8. ppt/theme/
   zip.folder("ppt")!.folder("theme")!.file("theme1.xml", buildTheme());
@@ -207,6 +215,7 @@ export async function buildPptxZip(deck: HtpPptxDeck): Promise<Buffer> {
                 fill: c.fill,
                 fontSize: c.fontSize,
                 fontColor: c.fontColor,
+                fontFamily: c.fontFamily,
                 fontWeight: c.fontWeight,
                 hAlign: c.hAlign,
                 vAlign: c.vAlign,

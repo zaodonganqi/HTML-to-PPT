@@ -62,7 +62,7 @@ export interface HtpSlideNode {
   order?: number;
 }
 
-/** 可编辑节点 — 描述幻灯片中的文本、表格、图片或回退区域 */
+/** 可编辑节点 — 描述幻灯片中的文本、表格或图片区域 */
 export interface HtpNode {
   /** 节点唯一标识符 */
   id: string;
@@ -78,10 +78,15 @@ export interface HtpNode {
   editable?: boolean;
   /** 文本导出模式（"editable" 为可编辑文本，"image" 为截图，"both" 为两者）*/
   textMode?: "editable" | "image" | "both";
+  /** 父子标记节点的合并策略，默认 auto */
+  merge?: HtpMergeMode;
 }
 
 /** 节点类型枚举 */
-export type HtpNodeType = "slide" | "text" | "table" | "image" | "fallback";
+export type HtpNodeType = "slide" | "text" | "table" | "image";
+
+/** 父子标记节点的合并策略 */
+export type HtpMergeMode = "auto" | "text" | "all" | "none" | "only";
 
 /** 动画描述 — 将一个 HTP 动画效果绑定到某个节点 */
 export interface HtpAnimation {
@@ -104,7 +109,7 @@ export interface HtpAnimation {
   /** 动画结束关键帧（可选） */
   to?: Partial<AnimationKeyframe>;
   /** 降级策略：native → PPTX 原生动画 / video → 导出视频 / none → 忽略 */
-  fallback?: "native" | "video" | "none";
+  degrade?: "native" | "video" | "none";
 }
 
 /** HTP 支持的动画效果名称 */
@@ -158,10 +163,12 @@ export interface HtpAsset {
 
 /** DOM 标记属性配置 */
 export interface MarkerConfig {
-  /** 元素类型标记属性名（例如 "htp"，产生 htp="text" 这样的属性） */
+  /** 元素类型标记属性名 */
   typeAttr: string;
   /** Scope 隔离标记属性名 */
   scopeAttr: string;
+  /** 节点合并策略标记属性名 */
+  mergeAttr: string;
 }
 
 /** 全局 window 对象的键名配置 */
@@ -185,6 +192,7 @@ export const DEFAULT_CONFIG: HtpConfig = {
   marker: {
     typeAttr: "htp",
     scopeAttr: "htp-scope",
+    mergeAttr: "htp-merge",
   },
   globals: {
     manifest: "__HTP_MANIFEST__",

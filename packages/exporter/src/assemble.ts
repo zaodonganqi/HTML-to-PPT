@@ -8,8 +8,7 @@
  *   4. 提取文本节点 → 文本框对象
  *   5. 提取表格节点 → 表格对象（复杂表格回退为截图）
  *   6. 提取图片节点 → PNG 截图
- *   7. 提取回退节点 → PNG 截图（用于无法原生映射的复杂视觉区域）
- *   8. 按 z-order 分层：背景 → 图片 → 表格 → 文本（从底到顶）
+ *   7. 按 z-order 分层：背景 → 图片 → 表格 → 文本（从底到顶）
  */
 
 import type { Page, ElementHandle } from "playwright";
@@ -20,7 +19,9 @@ import { discoverSlides, SlideInfo } from "./slides";
 import { extractTextNodes, TextExtractionOptions } from "./extract/text";
 import { extractTableNodes, TableExtractionOptions } from "./extract/table";
 import { extractImageNodes, ImageExtractionOptions } from "./extract/image";
-import { extractFallbackNodes, FallbackExtractionOptions } from "./extract/fallback";
+import { withMergeHiddenDescendants } from "./extract/merge";
+import { createFontResolver } from "./fonts";
+import type { FontOptions } from "./fonts";
 
 export interface AssembleOptions {
   /** 标记属性配置（用于识别 html 元素上的 htp 类型） */
@@ -35,6 +36,8 @@ export interface AssembleOptions {
   textMode: "editable" | "image";
   /** 动画导出模式 */
   animationMode: "native" | "video" | "none";
+  /** 字体转换配置 */
+  fonts?: FontOptions;
 }
 
 export interface AssembleResult {
@@ -47,7 +50,7 @@ export interface AssembleResult {
 /**
  * 从已渲染的页面中组装完整的 PPTX 甲板
  * 这是幻灯片装配的核心函数。它遍历页面中发现的每一张幻灯片，
- * 依次提取各类内容节点（回退区域、图片、表格、文本），
+ * 依次提取各类内容节点（图片区域、表格、文本），
  * 并将它们组装为 HtpPptxDeck 数据结构。
  *
  * 每张幻灯片的处理流程：
@@ -62,6 +65,7 @@ export async function assembleDeck(
 ): Promise<AssembleResult> {
   const warnings: HtpWarning[] = [];
   const { marker, viewport, deckWidth, deckHeight } = options;
+  const fontResolver = createFontResolver(options.fonts);
 
   // 发现页面中的所有幻灯片
   const { slides: slideInfos } = await discoverSlides(page, marker);
@@ -72,6 +76,7 @@ export async function assembleDeck(
     deckWidth,
     deckHeight,
     slideSelector: "",
+    fontResolver,
   };
 
   const htpSlides: HtpPptxSlide[] = [];
@@ -106,23 +111,8 @@ export async function assembleDeck(
       mimeType: "image/png",
     };
 
-    // 步骤 3-7：提取各类内容对象
+    // 步骤 3-6：提取各类内容对象
     const objects: HtpPptxObject[] = [];
-
-    // 回退节点（截图，位于背景之上、其余内容之下）
-    try {
-      const fallbacks = await extractFallbackNodes(page, slideEl, manifest, slideOpts);
-      for (const fb of fallbacks) {
-        if (fb.warning) warnings.push({ ...fb.warning, slideId: slideInfo.id });
-        if (fb.image.data.length > 0) objects.push(fb.image);
-      }
-    } catch (err) {
-      warnings.push({
-        code: "HTP_EXTRACT_FAILED",
-        message: `Fallback extraction failed: ${err}`,
-        slideId: slideInfo.id,
-      });
-    }
 
     // 图片节点
     try {
@@ -144,13 +134,15 @@ export async function assembleDeck(
       const tables = await extractTableNodes(page, slideEl, manifest, slideOpts);
       for (const tbl of tables) {
         warnings.push(...tbl.warnings.map((w) => ({ ...w, slideId: slideInfo.id })));
-        if (tbl.fallback) {
-          // 复杂表格→截取表格元素作为图片回退
+        if (tbl.rasterize) {
+          // 复杂表格→截取表格元素作为图片
           try {
             const tblEls = await slideEl.$$(`[${marker.typeAttr}="table"]`);
-            const tblIdx = tables.indexOf(tbl);
-            if (tblEls[tblIdx]) {
-              const ss = await tblEls[tblIdx].screenshot({ type: "png", animations: "disabled" });
+            const tblEl = tblEls[tbl.domIndex];
+            if (tblEl) {
+              const ss = await withMergeHiddenDescendants(tblEl, marker, manifest, () =>
+                tblEl.screenshot({ type: "png", animations: "disabled" }),
+              );
               objects.push({
                 type: "image",
                 x: tbl.table.x,
@@ -162,7 +154,7 @@ export async function assembleDeck(
               } as HtpPptxImage);
             }
           } catch {
-            // 使用已解析的表格对象作为回退
+            // 截图失败时使用已解析的表格对象
             objects.push(tbl.table);
           }
         } else {
@@ -225,7 +217,7 @@ async function hideEditableNodes(
   await page.evaluate(
     ({ attr }) => {
       // 隐藏所有已标记的可编辑/可截图元素，确保背景截图不包含它们
-      const allTypes = ["text", "table", "image", "fallback"];
+      const allTypes = ["text", "table", "image"];
       allTypes.forEach((type) => {
         document.querySelectorAll(`[${attr}="${type}"]`).forEach((el) => {
           const htmlEl = el as HTMLElement;
@@ -252,7 +244,7 @@ async function showEditableNodes(
   await page.evaluate(
     ({ attr }) => {
       // 恢复所有之前被隐藏的元素
-      const allTypes = ["text", "table", "image", "fallback"];
+      const allTypes = ["text", "table", "image"];
       allTypes.forEach((type) => {
         document.querySelectorAll(`[${attr}="${type}"]`).forEach((el) => {
           const htmlEl = el as HTMLElement;

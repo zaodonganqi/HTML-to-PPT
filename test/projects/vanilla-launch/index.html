@@ -23,6 +23,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 #slide-hero .light-orb.orb-gold{width:400px;height:400px;background:radial-gradient(circle,#f59e0b 0%,transparent 70%);bottom:-100px;right:-100px;animation:orbPulse 5s ease-in-out 1s infinite}
 #slide-hero .light-orb.orb-purple{width:350px;height:350px;background:radial-gradient(circle,#8b5cf6 0%,transparent 70%);bottom:10%;left:-80px;animation:orbPulse 6s ease-in-out 2s infinite}
 @keyframes orbPulse{0%,100%{opacity:0.4;transform:scale(1)}50%{opacity:0.7;transform:scale(1.15)}}
+#slide-hero .hero-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 #slide-hero .particle{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:particleFloat 8s ease-in-out infinite;opacity:0}
 @keyframes particleFloat{0%,100%{opacity:0;transform:translateY(0) scale(1)}20%{opacity:0.8}50%{opacity:0.4;transform:translateY(-60px) scale(1.5)}80%{opacity:0.2}100%{opacity:0;transform:translateY(-120px) scale(0.5)}}
 #slide-hero .device-silhouette{width:180px;height:360px;background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(139,92,246,0.1));border:2px solid rgba(59,130,246,0.3);border-radius:28px;position:relative;box-shadow:0 0 80px rgba(59,130,246,0.2),inset 0 0 40px rgba(59,130,246,0.05)}
@@ -155,12 +156,12 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 <section id="slide-hero" class="slide" htp="slide">
 
   <!-- Decorative light effects -->
-  <div id="orb-blue" class="light-orb orb-blue" htp="fallback"></div>
-  <div id="orb-gold" class="light-orb orb-gold" htp="fallback"></div>
-  <div id="orb-purple" class="light-orb orb-purple" htp="fallback"></div>
+  <div id="orb-blue" class="light-orb orb-blue" htp="image"></div>
+  <div id="orb-gold" class="light-orb orb-gold" htp="image"></div>
+  <div id="orb-purple" class="light-orb orb-purple" htp="image"></div>
 
   <!-- Ambient particles -->
-  <div htp="fallback">
+  <div id="hero-particles" class="hero-particles" htp="image">
     <div id="particle-1" class="particle" style="top:60%;left:10%;animation-delay:0s"></div>
     <div id="particle-2" class="particle" style="top:50%;left:25%;animation-delay:1.5s"></div>
     <div id="particle-3" class="particle" style="top:55%;left:70%;animation-delay:3s"></div>
@@ -192,7 +193,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
   <div class="design-layout">
 
     <!-- CSS-drawn phone front view -->
-    <div id="design-device" class="device-illustration" htp="fallback">
+    <div id="design-device" class="device-illustration" htp="image">
       <div id="design-screen" class="screen-area">
         <div id="design-glow" class="screen-glow"></div>
       </div>
@@ -283,7 +284,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 
     <!-- CSS-drawn camera bump -->
     <div class="camera-bump-area">
-      <div id="camera-bump" class="camera-bump" htp="fallback">
+      <div id="camera-bump" class="camera-bump" htp="image">
         <div id="lens-main" class="lens-main"></div>
         <div id="lens-small-1" class="lens-small ls1"></div>
         <div id="lens-small-2" class="lens-small ls2"></div>
@@ -366,7 +367,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
   <div class="battery-layout">
 
     <!-- Battery icon area (CSS-drawn) -->
-    <div id="battery-icon" class="battery-icon" htp="fallback">
+    <div id="battery-icon" class="battery-icon" htp="image">
       <div id="battery-cap" class="battery-cap"></div>
       <div id="battery-body" class="battery-body">
         <div id="battery-fill" class="battery-fill"></div>
@@ -452,7 +453,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 <section id="slide-pricing" class="slide" htp="slide">
 
   <!-- Decorative gradient strip -->
-  <div id="pricing-strip" class="pricing-strip" htp="fallback"></div>
+  <div id="pricing-strip" class="pricing-strip" htp="image"></div>
 
   <h2 id="pricing-title" class="pricing-title" htp="text">Pricing &amp; Availability</h2>
 
@@ -499,7 +500,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 <section id="slide-closing" class="slide" htp="slide">
 
   <!-- Decorative particles/dots -->
-  <div id="closing-particles" class="closing-particles" htp="fallback">
+  <div id="closing-particles" class="closing-particles" htp="image">
     <div class="closing-dot" style="left:5%;animation-delay:0s"></div>
     <div class="closing-dot" style="left:12%;animation-delay:1s"></div>
     <div class="closing-dot" style="left:20%;animation-delay:2s"></div>
@@ -538,7 +539,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
 
   // Generate additional particles dynamically for Slide 1
   var heroSlide = document.getElementById('slide-hero');
-  var particleContainer = heroSlide.querySelector('[htp="fallback"]');
+  var particleContainer = document.getElementById('hero-particles');
 
   if (particleContainer && !particleContainer.dataset.seeded) {
     particleContainer.dataset.seeded = 'true';

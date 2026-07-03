@@ -69,20 +69,26 @@ export async function createBrowserSession(
       timeout: options.timeout,
     });
 
-    // 等待 HTP 就绪信号
+    // 等待 HTP 就绪信号。优先等待 runtime 显式 ready，避免异步框架还没完成标记。
+    // 没有 runtime 的静态页面会在短超时后退回到网络空闲状态继续导出。
     if (options.waitUntil === "htp-ready") {
-      await Promise.race([
-        page.waitForFunction(
+      const readyTimeout = Math.min(options.timeout, 5000);
+      let ready = false;
+
+      try {
+        await page.waitForFunction(
           (key: string) => (window as any)[key] === true,
           options.readyKey,
-          { timeout: options.timeout },
-        ),
-        // 同时等待网络空闲作为保底策略
-        page.waitForLoadState("networkidle", { timeout: options.timeout }),
-      ]).catch(() => {
-        // htp-ready 始终未触发 → 以当前页面状态继续
+          { timeout: readyTimeout },
+        );
+        ready = true;
+      } catch {
+        await page.waitForLoadState("networkidle", { timeout: readyTimeout }).catch(() => {});
+      }
+
+      if (!ready) {
         console.warn(`Warning: ${options.readyKey} was never set. Proceeding with current page state.`);
-      });
+      }
 
       // 确保自定义字体已加载完成
       await page.evaluate(() => document.fonts?.ready).catch(() => {});

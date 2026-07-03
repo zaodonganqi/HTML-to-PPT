@@ -1,6 +1,10 @@
 # ── 依赖 ──────────────────────────────────────
 node_modules/
 pnpm-lock.yaml
+.pnpm-store/
+.npm/
+.yarn/
+.bun/
 
 # ── 构建产物 ──────────────────────────────────
 dist/
@@ -12,6 +16,10 @@ examples/*/dist/
 debug/
 test/output/
 coverage/
+playwright-report/
+test-results/
+blob-report/
+.nyc_output/
 
 # ── 环境变量 ──────────────────────────────────
 .env
@@ -22,7 +30,22 @@ coverage/
 .turbo/
 .vite/
 .cache/
+.parcel-cache/
+.rollup.cache/
+.eslintcache
+.stylelintcache
 *.tsbuildinfo
+
+# ── 本地运行与诊断 ─────────────────────────────
+*.local
+*.pid
+*.seed
+*.trace
+*.har
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # ── AI 工具 ───────────────────────────────────
 # Claude Code

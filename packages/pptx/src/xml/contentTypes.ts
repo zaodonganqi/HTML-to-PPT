@@ -21,11 +21,9 @@ export interface ContentTypeEntry {
  */
 export function buildContentTypes(entries: ContentTypeEntry[]): string {
   const defaults = [
+    { ext: "png", type: "image/png" },
     { ext: "rels", type: "application/vnd.openxmlformats-package.relationships+xml" },
     { ext: "xml", type: "application/xml" },
-    { ext: "png", type: "image/png" },
-    { ext: "jpeg", type: "image/jpeg" },
-    { ext: "jpg", type: "image/jpeg" },
   ];
 
   let xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
@@ -57,8 +55,32 @@ export function buildContentTypeEntries(
   const entries: ContentTypeEntry[] = [];
 
   entries.push({
+    part: "/docProps/core.xml",
+    type: "application/vnd.openxmlformats-package.core-properties+xml",
+  });
+
+  entries.push({
+    part: "/docProps/app.xml",
+    type: "application/vnd.openxmlformats-officedocument.extended-properties+xml",
+  });
+  entries.push({
     part: "/ppt/presentation.xml",
     type: "application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml",
+  });
+
+  entries.push({
+    part: "/ppt/presProps.xml",
+    type: "application/vnd.openxmlformats-officedocument.presentationml.presProps+xml",
+  });
+
+  entries.push({
+    part: "/ppt/viewProps.xml",
+    type: "application/vnd.openxmlformats-officedocument.presentationml.viewProps+xml",
+  });
+
+  entries.push({
+    part: "/ppt/tableStyles.xml",
+    type: "application/vnd.openxmlformats-officedocument.presentationml.tableStyles+xml",
   });
 
   for (let i = 1; i <= slideCount; i++) {
@@ -82,14 +104,6 @@ export function buildContentTypeEntries(
     entries.push({
       part: `/ppt/theme/theme${i}.xml`,
       type: "application/vnd.openxmlformats-officedocument.theme+xml",
-    });
-  }
-
-  for (let i = 1; i <= imageCount; i++) {
-    const isPng = true; // 默认使用 PNG 格式
-    entries.push({
-      part: `/ppt/media/image${i}.${isPng ? "png" : "jpeg"}`,
-      type: isPng ? "image/png" : "image/jpeg",
     });
   }
 

@@ -117,6 +117,9 @@ export function buildSlide(slide: SlideDef): string {
     ${bgXml}
     ${spTree}
   </p:cSld>
+  <p:clrMapOvr>
+    <a:masterClrMapping/>
+  </p:clrMapOvr>
   ${timingXml}
 </p:sld>`;
 }

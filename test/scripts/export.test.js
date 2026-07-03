@@ -18,32 +18,20 @@ const require = createRequire(import.meta.url);
 // 输出目录（每次运行前清空）
 const outputDir = path.resolve(import.meta.dirname, "..", "output");
 
-// 测试项目定义
+// Projects under test
+// Project font mappings
+const TEST_PROJECT_FONTS = {
+  map: {
+    "Inter": "Arial",
+    "Space Grotesk": "Arial",
+    "Playfair Display": "Times New Roman",
+  },
+};
+
 const PROJECTS = [
-  {
-    // React + Vite 企业官网
-    name: "react-official",
-    dir: path.resolve(import.meta.dirname, "..", "projects", "react-official", "dist"),
-    waitUntil: "load",
-    minSlides: 9,
-    hasManifest: true,
-  },
-  {
-    // Vue 3 + Vite 博客页面
-    name: "vue-blog",
-    dir: path.resolve(import.meta.dirname, "..", "projects", "vue-blog", "dist"),
-    waitUntil: "load",
-    minSlides: 3,
-    hasManifest: true,
-  },
-  {
-    // 原生 HTML 手机发布会（内联 htp 属性，不走 @htp/runtime）
-    name: "vanilla-launch",
-    dir: path.resolve(import.meta.dirname, "..", "projects", "vanilla-launch"),
-    waitUntil: "load",
-    minSlides: 9,
-    hasManifest: false,
-  },
+  { name: "react-official", input: path.resolve(import.meta.dirname, "..", "projects", "react-official", "dist"), slides: 9, fonts: TEST_PROJECT_FONTS },
+  { name: "vue-blog", input: path.resolve(import.meta.dirname, "..", "projects", "vue-blog", "dist"), slides: 3, fonts: TEST_PROJECT_FONTS },
+  { name: "vanilla-launch", input: path.resolve(import.meta.dirname, "..", "projects", "vanilla-launch"), slides: 9, fonts: TEST_PROJECT_FONTS },
 ];
 
 /**
@@ -51,7 +39,7 @@ const PROJECTS = [
  *
  * PPTX 文件本质是 ZIP 压缩包，幻灯片文件路径模式为
  * ppt/slides/slide{N}.xml，直接统计匹配该模式的文件即可。
- * 用于无 manifest 的项目（如内联 htp 属性的原生 HTML）。
+ * 用于从最终产物验证导出结果，避免依赖运行时 manifest。
  *
  * @param buffer - PPTX 文件二进制数据
  * @returns 幻灯片文件数量
@@ -73,23 +61,19 @@ async function countSlidesInPptx(buffer) {
  * 检查项包括：幻灯片数量、节点数量（如有 manifest）、
  * 产物文件大小、关键警告数量。非关键警告仅打印不记入失败。
  *
- * @param proj - 测试项目配置对象
+ * @param proj - Project definition
  * @param exportPptx - 导入的导出函数
  * @returns 包含通过和失败计数的对象
  */
 async function testProject(proj, exportPptx) {
   const result = await exportPptx({
-    input: proj.dir,
+    input: proj.input,
     output: path.join(outputDir, `${proj.name}.pptx`),
-    waitUntil: proj.waitUntil,
-    timeout: 60000,
+    fonts: proj.fonts,
   });
 
-  // 获取实际幻灯片数量
-  let actualSlides = result.manifest?.slides?.length ?? 0;
-  if (!proj.hasManifest) {
-    actualSlides = await countSlidesInPptx(result.buffer);
-  }
+  // 直接解析 PPTX 产物获取实际页数，避免测试依赖 manifest 是否存在。
+  const actualSlides = await countSlidesInPptx(result.buffer);
 
   // 节点数量（仅对有 manifest 的项目有意义）
   const nodeCount = result.manifest?.nodes?.length ?? 0;
@@ -104,10 +88,10 @@ async function testProject(proj, exportPptx) {
   );
 
   const checks = [
-    { label: `${actualSlides} slides (≥ ${proj.minSlides})`, ok: actualSlides >= proj.minSlides },
+    { label: `${actualSlides} slides (= ${proj.slides})`, ok: actualSlides === proj.slides },
   ];
 
-  if (proj.hasManifest) {
+  if (result.manifest) {
     checks.push({ label: `${nodeCount} nodes`, ok: nodeCount > 0 });
   }
 
@@ -156,9 +140,8 @@ let totalPassed = 0;
 let totalFailed = 0;
 
 for (const proj of PROJECTS) {
-  const tag = proj.hasManifest ? "" : " (无 manifest)";
-  console.log(`\n${proj.name}${tag}`);
-  console.log("-".repeat(proj.name.length + tag.length + 2));
+  console.log(`\n${proj.name}`);
+  console.log("-".repeat(proj.name.length + 2));
 
   try {
     const { passed, failed } = await testProject(proj, exportPptx);

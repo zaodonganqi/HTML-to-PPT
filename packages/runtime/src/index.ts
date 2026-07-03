@@ -12,6 +12,7 @@ import type {
   HtpManifest,
   HtpConfig,
   HtpAnimationEffect,
+  HtpMergeMode,
   HtpNodeType,
 } from "@htp/core";
 import { DEFAULT_CONFIG, deepMerge } from "@htp/core";
@@ -33,23 +34,24 @@ export interface SlideOptions {
 export interface TextOptions {
   /** 文本节点唯一标识符 */
   id?: string;
-  /** 文本导出模式：editable（可编辑）、image（图片）或 both（两者兼有） */
+  /** 文本导出模式 */
   textMode?: "editable" | "image" | "both";
+  /** 父子标记节点的合并策略 */
+  merge?: HtpMergeMode;
 }
 
 export interface TableOptions {
   /** 表格节点唯一标识符 */
   id?: string;
+  /** 父子标记节点的合并策略 */
+  merge?: HtpMergeMode;
 }
 
 export interface ImageOptions {
   /** 图片节点唯一标识符 */
   id?: string;
-}
-
-export interface FallbackOptions {
-  /** 回退节点唯一标识符 */
-  id?: string;
+  /** 父子标记节点的合并策略 */
+  merge?: HtpMergeMode;
 }
 
 export interface AnimationOptions {
@@ -71,8 +73,8 @@ export interface AnimationOptions {
   from?: { x?: number; y?: number; scale?: number; rotate?: number; opacity?: number };
   /** 动画结束状态（位移、缩放、旋转、透明度） */
   to?: { x?: number; y?: number; scale?: number; rotate?: number; opacity?: number };
-  /** 动画回退策略：native（原生实现）、video（录制视频）、none（不处理） */
-  fallback?: "native" | "video" | "none";
+  /** 动画降级策略：native（原生实现）、video（录制视频）、none（不处理） */
+  degrade?: "native" | "video" | "none";
 }
 
 export interface AutoOptions {
@@ -140,8 +142,6 @@ export interface HtpRuntime {
   table(target: Target, options?: TableOptions): HtpSelection;
   /** 将目标元素标记为图片节点 */
   image(target: Target, options?: ImageOptions): HtpSelection;
-  /** 将目标元素标记为回退节点 */
-  fallback(target: Target, options?: FallbackOptions): HtpSelection;
   /** 为目标元素添加动画效果 */
   animate(target: Target, options: AnimationOptions): HtpSelection;
   /** 根据选择器自动检测并标记幻灯片、文本、图片、表格 */
@@ -292,8 +292,11 @@ function createRuntime(
   }
 
   // 在 DOM 元素上标记类型属性和可选的作用域属性
-  function markElement(el: Element, type: HtpNodeType): void {
+  function markElement(el: Element, type: HtpNodeType, merge?: HtpMergeMode): void {
     el.setAttribute(config.marker.typeAttr, type);
+    if (merge) {
+      el.setAttribute(config.marker.mergeAttr, merge);
+    }
     if (scopeId) {
       el.setAttribute(config.marker.scopeAttr, scopeId);
     }
@@ -333,7 +336,7 @@ function createRuntime(
       const els = resolveElements(target);
       els.forEach((el) => {
         const id = getNodeId(el, options, "text");
-        markElement(el, "text");
+        markElement(el, "text", options?.merge);
         const slideId = findSlideId(el, config.marker.typeAttr, slides);
         const sel = buildSelector(el);
         if (!nodes.find((n) => n.id === id)) {
@@ -345,6 +348,7 @@ function createRuntime(
             scopeId,
             editable: options?.textMode !== "image",
             textMode: options?.textMode,
+            merge: options?.merge,
           });
         }
       });
@@ -356,7 +360,7 @@ function createRuntime(
       const els = resolveElements(target);
       els.forEach((el) => {
         const id = getNodeId(el, options, "table");
-        markElement(el, "table");
+        markElement(el, "table", options?.merge);
         const slideId = findSlideId(el, config.marker.typeAttr, slides);
         const sel = buildSelector(el);
         if (!nodes.find((n) => n.id === id)) {
@@ -366,6 +370,7 @@ function createRuntime(
             selector: sel,
             slideId,
             scopeId,
+            merge: options?.merge,
           });
         }
       });
@@ -377,7 +382,7 @@ function createRuntime(
       const els = resolveElements(target);
       els.forEach((el) => {
         const id = getNodeId(el, options, "image");
-        markElement(el, "image");
+        markElement(el, "image", options?.merge);
         const slideId = findSlideId(el, config.marker.typeAttr, slides);
         const sel = buildSelector(el);
         if (!nodes.find((n) => n.id === id)) {
@@ -387,32 +392,13 @@ function createRuntime(
             selector: sel,
             slideId,
             scopeId,
+            merge: options?.merge,
           });
         }
       });
       return new HtpSelection(els);
     },
 
-    // 标记回退节点
-    fallback(target, options) {
-      const els = resolveElements(target);
-      els.forEach((el) => {
-        const id = getNodeId(el, options, "fallback");
-        markElement(el, "fallback");
-        const slideId = findSlideId(el, config.marker.typeAttr, slides);
-        const sel = buildSelector(el);
-        if (!nodes.find((n) => n.id === id)) {
-          nodes.push({
-            id,
-            type: "fallback",
-            selector: sel,
-            slideId,
-            scopeId,
-          });
-        }
-      });
-      return new HtpSelection(els);
-    },
 
     // 为目标元素注册动画效果
     animate(target, options) {
@@ -424,7 +410,7 @@ function createRuntime(
           const slideId = findSlideId(el, config.marker.typeAttr, slides);
           node = {
             id: el.id || nextId("node"),
-            type: "fallback", // 默认节点类型
+            type: "image", // 默认按图片区域导出
             selector: buildSelector(el),
             slideId,
             scopeId,
@@ -442,7 +428,7 @@ function createRuntime(
           order: options.order,
           from: options.from,
           to: options.to,
-          fallback: options.fallback,
+          degrade: options.degrade,
         });
       });
       return new HtpSelection(els);

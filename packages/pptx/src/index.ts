@@ -65,6 +65,7 @@ export interface HtpPptxTableCell {
   fill?: string;      // 单元格填充色（十六进制）
   fontSize?: number;  // 字号（磅）
   fontColor?: string; // 字体颜色（十六进制）
+  fontFamily?: string; // 字体族
   fontWeight?: number | string;
   hAlign?: "left" | "center" | "right";
   vAlign?: "top" | "middle" | "bottom";

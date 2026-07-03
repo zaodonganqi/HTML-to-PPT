@@ -17,6 +17,7 @@ import { resolveInput } from "./input";
 import { createBrowserSession } from "./browser";
 import { assembleDeck } from "./assemble";
 import { writeDebugOutput } from "./debug";
+import type { FontOptions } from "./fonts";
 
 // ── 公共 API 类型定义 ──────────────────────────────────────────────────────────
 
@@ -47,8 +48,10 @@ export interface ExportPptxOptions {
     defaultMode?: "editable" | "image";
     preserveLineBreaks?: boolean;
   };
-  /** 回退截图选项（用于无法原生映射的复杂内容） */
-  fallback?: {
+  /** 字体转换选项：控制 CSS 字体到 PPTX 安全字体的映射 */
+  fonts?: FontOptions;
+  /** 图片栅格化选项（用于无法原生映射的复杂内容） */
+  image?: {
     format?: "png" | "jpeg";
     scale?: number;
     quality?: number;
@@ -140,6 +143,7 @@ export async function exportPptx(
           deckHeight,
           textMode,
           animationMode,
+          fonts: options.fonts,
         },
       );
       warnings.push(...assemblyWarnings);

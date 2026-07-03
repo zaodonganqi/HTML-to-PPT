@@ -18,21 +18,21 @@ htp.configure({
 });
 
 // Slide 1: 标题页
-htp.slide(".slide-1", { id: "slide-1" });
-htp.text("#title", { id: "title" });
-htp.text("#subtitle", { id: "subtitle" });
-htp.fallback(".accent-bar", { id: "accent-bar" });
+htp.slide(".slide-1");
+htp.text("#title");
+htp.text("#subtitle");
+htp.image(".accent-bar");
 
 // Slide 2: 内容页
-htp.slide(".slide-2", { id: "slide-2" });
-htp.text("#slide2-title", { id: "slide2-title" });
-htp.fallback(".visual", { id: "visual" });
-htp.table("#metrics", { id: "metrics" });
+htp.slide(".slide-2");
+htp.text("#slide2-title");
+htp.image(".visual");
+htp.table("#metrics");
 
 // Slide 3: 结尾页
-htp.slide(".slide-3", { id: "slide-3" });
-htp.text(".slide-3 h1", { id: "thanks-title" });
-htp.text(".slide-3 p", { id: "thanks-text" });
+htp.slide(".slide-3");
+htp.text(".slide-3 h1");
+htp.text(".slide-3 p");
 
 // 发出就绪信号（模拟异步数据加载的延迟）
 setTimeout(() => {

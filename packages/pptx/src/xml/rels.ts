@@ -45,6 +45,9 @@ export const REL_TYPE = {
   SLIDE_MASTER: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster",
   SLIDE_LAYOUT: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout",
   THEME: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme",
+  PRES_PROPS: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/presProps",
+  VIEW_PROPS: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/viewProps",
+  TABLE_STYLES: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/tableStyles",
   IMAGE: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
   CORE_PROPS: "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties",
   EXT_PROPS: "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties",
@@ -73,35 +76,30 @@ export function buildPresentationRels(
   slideCount: number,
   themeCount: number,
 ): string {
-  const entries: RelsEntry[] = [];
+  const entries: RelsEntry[] = [
+    { id: "rId1", type: REL_TYPE.SLIDE_MASTER, target: "slideMasters/slideMaster1.xml" },
+  ];
 
   for (let i = 1; i <= slideCount; i++) {
     entries.push({
-      id: `rId${100 + i}`,
+      id: `rId${i + 1}`,
       type: REL_TYPE.SLIDE,
       target: `slides/slide${i}.xml`,
     });
   }
 
-  entries.push({
-    id: "rId1",
-    type: REL_TYPE.SLIDE_MASTER,
-    target: "slideMasters/slideMaster1.xml",
-  });
-
-  entries.push({
-    id: "rId2",
-    type: REL_TYPE.SLIDE_LAYOUT,
-    target: "slideLayouts/slideLayout1.xml",
-  });
+  entries.push({ id: `rId${slideCount + 2}`, type: REL_TYPE.PRES_PROPS, target: "presProps.xml" });
+  entries.push({ id: `rId${slideCount + 3}`, type: REL_TYPE.VIEW_PROPS, target: "viewProps.xml" });
 
   for (let i = 1; i <= themeCount; i++) {
     entries.push({
-      id: `rId${200 + i}`,
+      id: `rId${slideCount + 3 + i}`,
       type: REL_TYPE.THEME,
       target: `theme/theme${i}.xml`,
     });
   }
+
+  entries.push({ id: `rId${slideCount + themeCount + 4}`, type: REL_TYPE.TABLE_STYLES, target: "tableStyles.xml" });
 
   return buildRels(entries);
 }
@@ -153,4 +151,14 @@ export function buildSlideRelsWithImages(
   });
 
   return buildRels(entries);
+}
+
+/**
+ * 生成幻灯片布局级关系文件。
+ * 空白布局需要指回所属 slide master，PowerPoint 会依赖这条关系修复布局链。
+ */
+export function buildSlideLayoutRels(): string {
+  return buildRels([
+    { id: "rId1", type: REL_TYPE.SLIDE_MASTER, target: "../slideMasters/slideMaster1.xml" },
+  ]);
 }

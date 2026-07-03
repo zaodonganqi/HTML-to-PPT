@@ -45,5 +45,33 @@ export function buildSlideMaster(): string {
   <p:sldLayoutIdLst>
     <p:sldLayoutId id="2147483649" r:id="rId1"/>
   </p:sldLayoutIdLst>
+  <p:txStyles>
+    <p:titleStyle>
+      <a:lvl1pPr algn="l" defTabSz="914400" rtl="0" eaLnBrk="1" latinLnBrk="0" hangingPunct="1">
+        <a:defRPr sz="4400" kern="1200">
+          <a:solidFill><a:schemeClr val="tx1"/></a:solidFill>
+          <a:latin typeface="+mj-lt"/><a:ea typeface="+mj-ea"/><a:cs typeface="+mj-cs"/>
+        </a:defRPr>
+      </a:lvl1pPr>
+    </p:titleStyle>
+    <p:bodyStyle>
+      <a:lvl1pPr marL="228600" indent="-228600" algn="l" defTabSz="914400" rtl="0" eaLnBrk="1" latinLnBrk="0" hangingPunct="1">
+        <a:buFont typeface="Arial"/>
+        <a:buChar char="&#8226;"/>
+        <a:defRPr sz="2800" kern="1200">
+          <a:solidFill><a:schemeClr val="tx1"/></a:solidFill>
+          <a:latin typeface="+mn-lt"/><a:ea typeface="+mn-ea"/><a:cs typeface="+mn-cs"/>
+        </a:defRPr>
+      </a:lvl1pPr>
+    </p:bodyStyle>
+    <p:otherStyle>
+      <a:lvl1pPr algn="l" defTabSz="914400" rtl="0" eaLnBrk="1" latinLnBrk="0" hangingPunct="1">
+        <a:defRPr sz="1800" kern="1200">
+          <a:solidFill><a:schemeClr val="tx1"/></a:solidFill>
+          <a:latin typeface="+mn-lt"/><a:ea typeface="+mn-ea"/><a:cs typeface="+mn-cs"/>
+        </a:defRPr>
+      </a:lvl1pPr>
+    </p:otherStyle>
+  </p:txStyles>
 </p:sldMaster>`;
 }

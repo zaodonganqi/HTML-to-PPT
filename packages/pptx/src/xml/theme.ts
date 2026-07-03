@@ -37,13 +37,13 @@ export function buildTheme(opts?: { name?: string }): string {
     <a:fontScheme name="HTP">
       <a:majorFont>
         <a:latin typeface="Arial"/>
-        <a:ea typeface=""/>
-        <a:cs typeface=""/>
+        <a:ea typeface="Microsoft YaHei"/>
+        <a:cs typeface="Arial"/>
       </a:majorFont>
       <a:minorFont>
         <a:latin typeface="Arial"/>
-        <a:ea typeface=""/>
-        <a:cs typeface=""/>
+        <a:ea typeface="Microsoft YaHei"/>
+        <a:cs typeface="Arial"/>
       </a:minorFont>
     </a:fontScheme>
     <a:fmtScheme name="HTP">
@@ -69,5 +69,7 @@ export function buildTheme(opts?: { name?: string }): string {
       </a:bgFillStyleLst>
     </a:fmtScheme>
   </a:themeElements>
+  <a:objectDefaults/>
+  <a:extraClrSchemeLst/>
 </a:theme>`;
 }

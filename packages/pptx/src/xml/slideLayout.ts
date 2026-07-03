@@ -34,5 +34,8 @@ export function buildSlideLayout(): string {
       </p:grpSpPr>
     </p:spTree>
   </p:cSld>
+  <p:clrMapOvr>
+    <a:masterClrMapping/>
+  </p:clrMapOvr>
 </p:sldLayout>`;
 }

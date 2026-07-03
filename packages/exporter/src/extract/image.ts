@@ -16,7 +16,7 @@
 import type { Page, ElementHandle } from "playwright";
 import type { HtpPptxImage } from "@htp/pptx";
 import type { HtpManifest, MarkerConfig, HtpWarning } from "@htp/core";
-import { DEFAULT_CONFIG } from "@htp/core";
+import { withMergeHiddenDescendants } from "./merge";
 
 export interface ImageExtractionOptions {
   /** 标记属性配置 */
@@ -61,34 +61,56 @@ export async function extractImageNodes(
 
   // 阶段 1：在浏览器上下文中获取所有图片元素的位置信息
   const imageInfos = await page.evaluate(
-    ({ typeAttr, vw, vh, dw, dh, slideSelector }: {
+    ({ typeAttr, mergeAttr, nodes, vw, vh, dw, dh, slideSelector }: {
       typeAttr: string;
+      mergeAttr: string;
+      nodes: Array<{ selector: string; merge?: string }>;
       vw: number; vh: number;
       dw: number; dh: number;
       slideSelector: string;
     }) => {
       const results: Array<{
+        domIndex: number;
         x: number; y: number; w: number; h: number;
-        isFallback: boolean;
       }> = [];
 
       const slideEl = document.querySelector(slideSelector);
       if (!slideEl) return results;
 
+      const markedTypes = new Set(["text", "table", "image"]);
+      const getMerge = (el: Element): string => {
+        const attrMerge = el.getAttribute(mergeAttr);
+        if (attrMerge) return attrMerge;
+        const matched = nodes.find((node) => document.querySelector(node.selector) === el);
+        return matched?.merge || "auto";
+      };
+      const shouldExport = (el: Element, type: string): boolean => {
+        if (getMerge(el) === "only") return false;
+        for (let parent = el.parentElement; parent && parent !== slideEl; parent = parent.parentElement) {
+          const parentType = parent.getAttribute(typeAttr);
+          if (!parentType || !markedTypes.has(parentType)) continue;
+          const merge = getMerge(parent);
+          if (merge === "all" || merge === "none") return false;
+          if (merge === "text" && (type === "text" || type === "table")) return false;
+        }
+        return true;
+      };
+
       const imgEls = slideEl.querySelectorAll(`[${typeAttr}="image"]`);
 
-      imgEls.forEach((el) => {
+      imgEls.forEach((el, domIndex) => {
+        if (!shouldExport(el, "image")) return;
         const htmlEl = el as HTMLElement;
         const rect = htmlEl.getBoundingClientRect();
 
         // 计算相对于幻灯片元素的位置（而非相对于视口）
         const slideRect = slideEl.getBoundingClientRect();
         results.push({
+          domIndex,
           x: (rect.x - slideRect.x) / vw * dw,
           y: (rect.y - slideRect.y) / vh * dh,
           w: rect.width / vw * dw,
           h: rect.height / vh * dh,
-          isFallback: false,
         });
       });
 
@@ -96,6 +118,8 @@ export async function extractImageNodes(
     },
     {
       typeAttr: marker.typeAttr,
+      mergeAttr: marker.mergeAttr,
+      nodes: manifest?.nodes ?? [],
       vw: viewport.width,
       vh: viewport.height,
       dw: deckWidth,
@@ -107,13 +131,15 @@ export async function extractImageNodes(
   // 阶段 2：在 Node.js 端对每个图片元素进行截图
   const results: ExtractedImage[] = [];
 
-  for (let i = 0; i < imageInfos.length; i++) {
-    const info = imageInfos[i];
+  const imgEls = await slideHandle.$$(`[${marker.typeAttr}="image"]`);
+  for (const info of imageInfos) {
     try {
-      // 通过 slideHandle 定位图片元素
-      const imgEls = await slideHandle.$$(`[${marker.typeAttr}="image"]`);
-      if (imgEls[i]) {
-        const screenshot = await imgEls[i].screenshot({ type: "png", animations: "disabled" });
+      // 通过原始 DOM 序号定位图片元素，避免过滤后索引错位
+      const imgEl = imgEls[info.domIndex];
+      if (imgEl) {
+        const screenshot = await withMergeHiddenDescendants(imgEl, marker, manifest, () =>
+          imgEl.screenshot({ type: "png", animations: "disabled" }),
+        );
         results.push({
           image: {
             type: "image",

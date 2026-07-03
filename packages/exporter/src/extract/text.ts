@@ -20,6 +20,7 @@ import type { HtpPptxTextBox } from "@htp/pptx";
 import type { HtpManifest, HtpWarning, MarkerConfig } from "@htp/core";
 import { DEFAULT_CONFIG, HtpWarningCode, cssPxToPt, pxToInches, resolveColor, parseFontFamily } from "@htp/core";
 import { DEFAULT_VIEWPORT, DEFAULT_SLIDE_SIZE } from "@htp/core";
+import type { FontResolver } from "../fonts";
 
 export interface TextExtractionOptions {
   /** 标记属性配置 */
@@ -34,6 +35,8 @@ export interface TextExtractionOptions {
   defaultMode: "editable" | "image";
   /** 当前幻灯片的 CSS 选择器 */
   slideSelector: string;
+  /** 字体转换器 */
+  fontResolver?: FontResolver;
 }
 
 export interface ExtractedText {
@@ -65,9 +68,11 @@ export async function extractTextNodes(
 ): Promise<ExtractedText[]> {
   const { marker, viewport, deckWidth, deckHeight } = options;
 
-  return page.evaluate(
-    ({ typeAttr, vw, vh, dw, dh, slideSelector }: {
+  const extracted = await page.evaluate(
+    ({ typeAttr, mergeAttr, nodes, vw, vh, dw, dh, slideSelector }: {
       typeAttr: string;
+      mergeAttr: string;
+      nodes: Array<{ selector: string; merge?: string }>;
       vw: number; vh: number;
       dw: number; dh: number;
       slideSelector: string;
@@ -78,10 +83,30 @@ export async function extractTextNodes(
       const slideEl = document.querySelector(slideSelector);
       if (!slideEl) return results;
 
+      const markedTypes = new Set(["text", "table", "image"]);
+      const getMerge = (el: Element): string => {
+        const attrMerge = el.getAttribute(mergeAttr);
+        if (attrMerge) return attrMerge;
+        const matched = nodes.find((node) => document.querySelector(node.selector) === el);
+        return matched?.merge || "auto";
+      };
+      const shouldExport = (el: Element, type: string): boolean => {
+        if (getMerge(el) === "only") return false;
+        for (let parent = el.parentElement; parent && parent !== slideEl; parent = parent.parentElement) {
+          const parentType = parent.getAttribute(typeAttr);
+          if (!parentType || !markedTypes.has(parentType)) continue;
+          const merge = getMerge(parent);
+          if (merge === "all" || merge === "none") return false;
+          if (merge === "text" && (type === "text" || type === "table")) return false;
+        }
+        return true;
+      };
+
       const textEls = slideEl.querySelectorAll(`[${typeAttr}="text"]`);
 
       textEls.forEach((el) => {
         const htmlEl = el as HTMLElement;
+        if (!shouldExport(htmlEl, "text")) return;
         const rect = htmlEl.getBoundingClientRect();
         const style = getComputedStyle(htmlEl);
         const text = htmlEl.textContent?.trim() || (htmlEl as any).innerText?.trim() || "";
@@ -109,7 +134,7 @@ export async function extractTextNodes(
           ).join("");
         }
 
-        const fontFamily = style.fontFamily.split(",")[0]?.trim().replace(/['"]/g, "") || "Arial";
+        const fontFamily = style.fontFamily || "Arial";
         const fontWeight = style.fontWeight;
         const fontStyle = style.fontStyle;
         const textAlign = style.textAlign as "left" | "center" | "right" | "justify";
@@ -135,6 +160,8 @@ export async function extractTextNodes(
     },
     {
       typeAttr: marker.typeAttr,
+      mergeAttr: marker.mergeAttr,
+      nodes: manifest?.nodes ?? [],
       vw: viewport.width,
       vh: viewport.height,
       dw: deckWidth,
@@ -142,4 +169,19 @@ export async function extractTextNodes(
       slideSelector: options.slideSelector,
     },
   );
+
+  const fontResolver = options.fontResolver;
+  if (!fontResolver) return extracted;
+
+  return extracted.map((item) => {
+    const resolved = fontResolver.resolve(item.textBox.fontFamily, item.textBox.text);
+    return {
+      ...item,
+      textBox: {
+        ...item.textBox,
+        fontFamily: resolved.fontFamily,
+      },
+      warning: item.warning ?? resolved.warning,
+    };
+  });
 }

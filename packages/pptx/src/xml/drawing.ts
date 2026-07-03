@@ -190,6 +190,14 @@ export interface ParagraphDef {
   align?: "left" | "center" | "right" | "justify";
 }
 
+function mapParagraphAlign(align: "left" | "center" | "right" | "justify" | undefined): string | undefined {
+  if (align === "center") return "ctr";
+  if (align === "right") return "r";
+  if (align === "justify") return "just";
+  if (align === "left") return "l";
+  return undefined;
+}
+
 /**
  * 构建 p:sp 文本框形状节点
  *
@@ -246,17 +254,18 @@ export function buildTextBox(
  * 并在末尾附加必需的 a:endParaRPr 节点。
  */
 function buildParagraph(para: ParagraphDef): string {
-  const alignAttr = para.align ? ` algn="${esc(para.align)}"` : "";
+  const align = mapParagraphAlign(para.align) || "l";
+  const pPrXml = `<a:pPr algn="${esc(align)}"/>`;
   let runsXml = "";
 
   for (const run of para.runs) {
     runsXml += buildRun(run);
   }
 
-  // PPTX 要求的段落结束运行属性
+  // Required paragraph end-run properties.
   runsXml += `<a:endParaRPr/>`;
 
-  return `<a:p${alignAttr}>${runsXml}</a:p>`;
+  return `<a:p>${pPrXml}${runsXml}</a:p>`;
 }
 
 /**
@@ -287,7 +296,7 @@ function buildRun(run: TextRun): string {
 
   let fontXml = "";
   if (run.fontFamily) {
-    fontXml = `<a:latin typeface="${esc(run.fontFamily)}"/>`;
+    fontXml = `<a:latin typeface="${esc(run.fontFamily)}"/><a:ea typeface="${esc(run.fontFamily)}"/><a:cs typeface="${esc(run.fontFamily)}"/>`;
   }
 
   if (parts.length > 0 || colorXml || fontXml) {
@@ -309,6 +318,7 @@ export interface TableCellDef {
   fill?: string;        // 填充色（十六进制）
   fontSize?: number;    // 字号（磅）
   fontColor?: string;   // 字体颜色（十六进制）
+  fontFamily?: string;   // 字体族
   fontWeight?: number | string;
   hAlign?: "left" | "center" | "right";
   vAlign?: "top" | "middle" | "bottom";
@@ -350,7 +360,7 @@ export function buildTable(
   // 构建表格列网格
   let gridXml = `<a:tblGrid>`;
   for (let c = 0; c < table.cols; c++) {
-    gridXml += `<a:gridCol w="${Math.round(colWidth[c])}"/>`;
+    gridXml += `<a:gridCol w="${Math.round(colWidth[c])}"><a:extLst><a:ext uri="{9D8B030D-6E8A-4147-A177-3AD203B41FA5}"><a16:colId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" val="${20000 + c}"/></a:ext></a:extLst></a:gridCol>`;
   }
   gridXml += `</a:tblGrid>`;
 
@@ -362,7 +372,7 @@ export function buildTable(
       const cell = table.cells.find((tc) => tc.row === r && tc.col === c);
       rowsXml += buildTableCell(cell, r, c, rowHeight[r], colWidth[c]);
     }
-    rowsXml += `</a:tr>`;
+    rowsXml += `<a:extLst><a:ext uri="{0D108BD9-81ED-4DB2-BD59-A6C34878D82A}"><a16:rowId xmlns:a16="http://schemas.microsoft.com/office/drawing/2014/main" val="${10000 + r}"/></a:ext></a:extLst></a:tr>`;
   }
 
   return `<p:graphicFrame>
@@ -371,11 +381,17 @@ export function buildTable(
       <p:cNvGraphicFramePr><a:graphicFrameLocks noGrp="1"/></p:cNvGraphicFramePr>
       <p:nvPr/>
     </p:nvGraphicFramePr>
-    <p:xfrm>${buildXfrm(xfrm)}</p:xfrm>
+    <p:xfrm>
+      <a:off x="${Math.round(xfrm.x)}" y="${Math.round(xfrm.y)}"/>
+      <a:ext cx="${Math.round(xfrm.cx)}" cy="${Math.round(xfrm.cy)}"/>
+    </p:xfrm>
     <a:graphic>
-      <a:graphicData uri="${NS.a}/table">
-        ${gridXml}
-        ${rowsXml}
+      <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/table">
+        <a:tbl>
+          <a:tblPr firstRow="1" bandRow="1"/>
+          ${gridXml}
+          ${rowsXml}
+        </a:tbl>
       </a:graphicData>
     </a:graphic>
   </p:graphicFrame>`;
@@ -395,79 +411,61 @@ function buildTableCell(
   w: number,
 ): string {
   const text = cell?.text || "";
-
-  // 单元格属性
-  let tcPr = "";
-  if (cell) {
-    const props: string[] = [];
-
-    // 填充色
-    if (cell.fill) {
-      const clean = cell.fill.replace("#", "").toUpperCase();
-      tcPr += `<a:solidFill><a:srgbClr val="${esc(clean)}"/></a:solidFill>`;
-    }
-
-    // 内边距
-    tcPr += ` marL="45720" marR="45720" marT="22860" marB="22860"`;
-
-    // 垂直对齐
-    const vAnchor = cell.vAlign === "middle" ? "mid" : cell.vAlign === "bottom" ? "b" : "t";
-    tcPr += ` anchor="${vAnchor}"`;
-
-    // 边框
-    if (cell.borderTop) {
-      tcPr += buildCellBorder("top", cell.borderTop.width, cell.borderTop.color);
-    }
-    if (cell.borderBottom) {
-      tcPr += buildCellBorder("bottom", cell.borderBottom.width, cell.borderBottom.color);
-    }
-    if (cell.borderLeft) {
-      tcPr += buildCellBorder("left", cell.borderLeft.width, cell.borderLeft.color);
-    }
-    if (cell.borderRight) {
-      tcPr += buildCellBorder("right", cell.borderRight.width, cell.borderRight.color);
-    }
-
-    if (cell.rowSpan && cell.rowSpan > 1) {
-      props.push(`rowSpan="${cell.rowSpan}"`);
-    }
-    if (cell.colSpan && cell.colSpan > 1) {
-      props.push(`gridSpan="${cell.colSpan}"`);
-    }
-  }
-
-  // 构建文本主体
-  const align = cell?.hAlign || "left";
+  const align = mapParagraphAlign(cell?.hAlign || "left") || "l";
   const fontSize = cell?.fontSize || 11;
   const fontColor = cell?.fontColor || "000000";
-
   const cleanColor = fontColor.replace("#", "").toUpperCase();
+  const fontFamily = cell?.fontFamily || "Arial";
+  const isBold = cell?.fontWeight === 700 || cell?.fontWeight === "bold";
 
-  return `<a:tc${tcPr}>
+  const tcAttrs: string[] = [];
+  if (cell?.rowSpan && cell.rowSpan > 1) tcAttrs.push(`rowSpan="${Math.round(cell.rowSpan)}"`);
+  if (cell?.colSpan && cell.colSpan > 1) tcAttrs.push(`gridSpan="${Math.round(cell.colSpan)}"`);
+
+  let tcPrChildren = "";
+  if (cell?.fill) {
+    const cleanFill = cell.fill.replace("#", "").toUpperCase();
+    tcPrChildren += `<a:solidFill><a:srgbClr val="${esc(cleanFill)}"/></a:solidFill>`;
+  }
+  if (cell?.borderTop) tcPrChildren += buildCellBorder("lnT", cell.borderTop.width, cell.borderTop.color);
+  if (cell?.borderBottom) tcPrChildren += buildCellBorder("lnB", cell.borderBottom.width, cell.borderBottom.color);
+  if (cell?.borderLeft) tcPrChildren += buildCellBorder("lnL", cell.borderLeft.width, cell.borderLeft.color);
+  if (cell?.borderRight) tcPrChildren += buildCellBorder("lnR", cell.borderRight.width, cell.borderRight.color);
+
+  const tcOpen = tcAttrs.length > 0 ? `<a:tc ${tcAttrs.join(" ")}>` : "<a:tc>";
+  const runXml = text
+    ? `<a:r>
+          <a:rPr sz="${Math.round(fontSize * 100)}" b="${isBold ? "1" : "0"}">
+            <a:solidFill><a:srgbClr val="${esc(cleanColor)}"/></a:solidFill>
+            <a:latin typeface="${esc(fontFamily)}"/>
+            <a:ea typeface="${esc(fontFamily)}"/>
+            <a:cs typeface="${esc(fontFamily)}"/>
+          </a:rPr>
+          <a:t>${esc(text)}</a:t>
+        </a:r>`
+    : "";
+
+  return `${tcOpen}
     <a:txBody>
       <a:bodyPr/>
       <a:lstStyle/>
-      <a:p algn="${align}">
-        <a:r>
-          <a:rPr sz="${Math.round(fontSize * 100)}" b="${cell?.fontWeight === 700 || cell?.fontWeight === "bold" ? "1" : "0"}">
-            <a:solidFill><a:srgbClr val="${esc(cleanColor)}"/></a:solidFill>
-          </a:rPr>
-          <a:t>${esc(text)}</a:t>
-        </a:r>
+      <a:p>
+        <a:pPr algn="${esc(align)}"/>
+        ${runXml}
         <a:endParaRPr/>
       </a:p>
     </a:txBody>
+    <a:tcPr marL="45720" marR="45720" marT="22860" marB="22860">
+      ${tcPrChildren}
+    </a:tcPr>
   </a:tc>`;
 }
 
 /**
- * 构建单元格边框节点
- *
- * 生成单个方向（top/bottom/left/right）的边框 XML，
- * 使用 a:ln 子元素指定宽度和颜色。
+ * Build a table cell border edge.
  */
 function buildCellBorder(
-  side: string,
+  side: "lnT" | "lnB" | "lnL" | "lnR",
   width: number,
   color: string,
 ): string {
@@ -491,6 +489,7 @@ export function buildSlideBackground(bgRId: string): string {
         <a:blip r:embed="${esc(bgRId)}"/>
         <a:stretch><a:fillRect/></a:stretch>
       </a:blipFill>
+      <a:effectLst/>
     </p:bgPr>
   </p:bg>`;
 }
